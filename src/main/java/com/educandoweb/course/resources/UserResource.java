@@ -13,7 +13,7 @@ public class UserResource  {
 
 	@GetMapping
 	public ResponseEntity<User> findAll(){ // VERIFICAR SE A CONEXÃO ESTÁ FUNCIONANDO
-		 User u = new User("1234567", "maria", "maria@gmail.com", "9999-9999", 1L); 
+		 User u = new User(1L, "maria", "maria@gmail.com","12345", "9999-9999"); 
 		 return ResponseEntity.ok().body(u);
 	}
 	

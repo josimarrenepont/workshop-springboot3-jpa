@@ -10,7 +10,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-@Embeddable // POR SER UAM CLASSE AUXILIAR DE CHAVE COMPOSTA, USAMOS @Embeddable
+@Embeddable // POR SER UMA CLASSE AUXILIAR DE CHAVE COMPOSTA, USAMOS @Embeddable
 
 public class OrdemItemPK implements Serializable {
 

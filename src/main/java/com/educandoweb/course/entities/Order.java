@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.educandoweb.course.entities.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -16,7 +17,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -100,9 +100,17 @@ public class Order implements Serializable {
 	public void setPayment(Payment payment) {
 		this.payment = payment;
 	}
-
+	
 	public Set<OrderItem> getItems(){
 		return items;
+	}
+	
+	public Double getTotal() {
+		double sum = 0.0;
+		for(OrderItem x : items) {
+			sum += x.getSubTotal(); 
+		}
+		return sum;
 	}
 
 	@Override

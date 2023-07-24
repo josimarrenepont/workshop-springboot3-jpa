@@ -16,7 +16,7 @@ public class CategoryService {
 	private CategoryRepository repository;
 	
 	public List<Category> findAll(){
-		return repository.findAll();
+		return repository.searchAll();
 	}
 	
 	public Category findById(Long id) {

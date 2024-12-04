@@ -24,4 +24,8 @@ public class ProductService {
 		Optional<Product> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
+
+	public Product insert(Product obj) {
+		return repository.save(obj);
+	}
 }

@@ -3,6 +3,7 @@ package com.educandoweb.course.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,11 +30,18 @@ public class ProductService {
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
-	public Product insert(Product obj) {
-		return repository.save(obj);
+	public Product insert(ProductDto obj) {
+		Product product = new Product();
+		product.setName(obj.getName());
+		product.setPrice(obj.getPrice());
+		product.setDescription(obj.getDescription());
+		product.setImgUrl(obj.getImgUrl());
+		product.setQunatityInStock(obj.getQunatityInStock());
+
+		return repository.save(product);
 	}
 
-	public Product update(Long id, Product obj) {
+	public Product update(Long id, ProductDto obj) {
 		try{
 			Product entity = repository.getReferenceById(id);
 			updateData(entity, obj);
@@ -43,7 +51,7 @@ public class ProductService {
 		}
 	}
 
-	private void updateData(Product entity, Product obj) {
+	private void updateData(Product entity, ProductDto obj) {
 		entity.setName(obj.getName());
 		entity.setQunatityInStock(obj.getQunatityInStock());
 		entity.setDescription(obj.getDescription());

@@ -1,5 +1,7 @@
 package com.educandoweb.course.entities.dto;
 
+import com.educandoweb.course.entities.Product;
+
 public class ProductDto {
 
     private Long id;
@@ -19,6 +21,9 @@ public class ProductDto {
         this.price = price;
         this.imgUrl = imgUrl;
         this.qunatityInStock = qunatityInStock;
+    }
+
+    public ProductDto(Product product) {
     }
 
     public Long getId() {

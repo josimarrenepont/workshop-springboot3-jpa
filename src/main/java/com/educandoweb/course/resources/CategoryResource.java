@@ -13,8 +13,8 @@ import com.educandoweb.course.entities.Category;
 import com.educandoweb.course.repositories.CategoryRepository;
 import com.educandoweb.course.services.CategoryService;
 
-@RestController //
-@RequestMapping(value = "/categories") //
+@RestController
+@RequestMapping(value = "/categories")
 public class CategoryResource {
 
 	@Autowired
@@ -24,7 +24,7 @@ public class CategoryResource {
 	private CategoryRepository repository;
 
 	@GetMapping
-	public ResponseEntity<List<Category>> findAll() { // VERIFICAR SE A CONEXÃO ESTÁ FUNCIONANDO
+	public ResponseEntity<List<Category>> findAll() {
 		List<Category> list = repository.searchAll();
 		return ResponseEntity.ok().body(list);
 	}

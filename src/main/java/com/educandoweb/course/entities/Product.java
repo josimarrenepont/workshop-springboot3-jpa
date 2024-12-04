@@ -21,9 +21,6 @@ import jakarta.persistence.Table;
 @Table(name = "tb_product")
 public class Product implements Serializable {
 	
-	
-	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -31,6 +28,8 @@ public class Product implements Serializable {
 	private String description;
 	private Double price;
 	private String imgUrl;
+
+	private Integer qunatityInStock;
 	
 	@ManyToMany
 	@JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name = "product_id"),
@@ -43,17 +42,16 @@ public class Product implements Serializable {
 	public Product() {
 	}
 
-	public Product(Long id, String name, String description, Double price, String imgUrl) {
+	public Product(Long id, String name, String description, Double price,
+				   String imgUrl, Integer qunatityInStock) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.imgUrl = imgUrl;
-		
+		this.qunatityInStock = qunatityInStock;
 	}
-
-
 
 	public Long getId() {
 		return id;
@@ -94,6 +92,12 @@ public class Product implements Serializable {
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
 	}
+
+	public Integer getQunatityInStock(){ return qunatityInStock;}
+
+	public void setQunatityInStock (Integer qunatityInStock){
+		this.qunatityInStock = qunatityInStock;
+	}
 	public Set<Category> getCategories() {
 		return categories;
 	}
@@ -107,14 +111,10 @@ public class Product implements Serializable {
 		return set;
 	}
 
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
 	}
-
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -126,7 +126,4 @@ public class Product implements Serializable {
 		Product other = (Product) obj;
 		return Objects.equals(id, other.id);
 	}
-
-	
-	
 }

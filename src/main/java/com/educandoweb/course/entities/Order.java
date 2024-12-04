@@ -24,8 +24,6 @@ import jakarta.persistence.Table;
 @Table(name = "tb_order")
 public class Order implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -34,10 +32,9 @@ public class Order implements Serializable {
 	private Instant moment;
 
 	private Integer orderStatus;
-	
-	
-	@ManyToOne // CHAVE ESTRANGEIRA
-	@JoinColumn(name = "client_id") // INFORMANDO QUE O NOME DA CHAVE NO BANCO É client_id
+
+	@ManyToOne
+	@JoinColumn(name = "client_id")
 	private User client;
 
 	@OneToMany(mappedBy = "id.order")
@@ -128,5 +125,4 @@ public class Order implements Serializable {
 		Order other = (Order) obj;
 		return Objects.equals(id, other.id);
 	}
-
 }

@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.services.ProductService;
 
-@RestController //
-@RequestMapping(value = "/products") //
+@RestController
+@RequestMapping(value = "/products")
 public class ProductResource {
 
 	@Autowired
 	private ProductService service;
 
 	@GetMapping
-	public ResponseEntity<List<Product>> findAll() { // VERIFICAR SE A CONEXÃO ESTÁ FUNCIONANDO
+	public ResponseEntity<List<Product>> findAll() {
 		List<Product> list = service.findAll();
 		return ResponseEntity.ok().body(list);
 	}

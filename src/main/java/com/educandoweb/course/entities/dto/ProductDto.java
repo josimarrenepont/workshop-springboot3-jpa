@@ -2,6 +2,9 @@ package com.educandoweb.course.entities.dto;
 
 import com.educandoweb.course.entities.Product;
 
+import java.util.List;
+import java.util.Set;
+
 public class ProductDto {
 
     private Long id;
@@ -12,18 +15,17 @@ public class ProductDto {
 
     private Integer qunatityInStock;
 
+    private Set<Product> productList;
+
     public ProductDto(){}
 
-    public ProductDto(Long id, String name, String description, Double price, String imgUrl, Integer qunatityInStock) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imgUrl = imgUrl;
-        this.qunatityInStock = qunatityInStock;
-    }
-
     public ProductDto(Product product) {
+        this.id = product.getId();
+        this.name = product.getName();
+        this.description = product.getDescription();
+        this.price = product.getPrice();
+        this.imgUrl = product.getImgUrl();
+        this.qunatityInStock = product.getQunatityInStock();
     }
 
     public Long getId() {
@@ -72,5 +74,13 @@ public class ProductDto {
 
     public void setQunatityInStock(Integer qunatityInStock) {
         this.qunatityInStock = qunatityInStock;
+    }
+
+    public Set<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(Set<Product> productList) {
+        this.productList = productList;
     }
 }

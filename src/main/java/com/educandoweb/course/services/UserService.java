@@ -3,6 +3,7 @@ package com.educandoweb.course.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.educandoweb.course.entities.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -30,8 +31,14 @@ public class UserService {
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
-	public User insert(User obj) {
-		return repository.save(obj);
+	public User insert(UserDto userDto) {
+		User user = new User();
+		user.setName(userDto.getName());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(userDto.getPassword());
+		user.setPhone(userDto.getPhone());
+
+		return repository.save(user);
 	}
 
 	public void delete(Long id) {
@@ -44,7 +51,7 @@ public class UserService {
 		}
 	}
 
-	public User update(Long id, User obj) {
+	public User update(Long id, UserDto obj) {
 		try {
 			User entity = repository.getReferenceById(id);
 			updateData(entity, obj);
@@ -54,7 +61,7 @@ public class UserService {
 		}
 	}
 
-	private void updateData(User entity, User obj) {
+	private void updateData(User entity, UserDto obj) {
 		entity.setName(obj.getName());
 		entity.setEmail(obj.getEmail());
 		entity.setPhone(obj.getPhone());

@@ -1,28 +1,34 @@
 package com.educandoweb.course.entities.dto;
 
+import com.educandoweb.course.entities.User;
+
+import java.util.Set;
+
 public class UserDto {
 
-    private long id;
+    private Long id;
     private String name;
     private String email;
     private String phone;
     private String password;
 
+    private Set<User> userList;
+
     public UserDto(){}
 
-    public UserDto(long id, String name, String email, String phone, String password) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
-        this.password = password;
+    public UserDto(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.phone = user.getPhone();
+        this.password = user.getPassword();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,5 +62,13 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(Set<User> userList) {
+        this.userList = userList;
     }
 }

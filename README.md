@@ -8,6 +8,8 @@ Este projeto é um sistema completo para gerenciar pedidos, controlar estoque e 
 - Controle de estoque com redução automática em cada venda.
 - Geração de relatórios de vendas.
 - Integração com API RESTful.
+- Automação de builds e deploy com GitHub Actions.
+- Containerização com Docker e orquestração com Docker Compose.
   
 # Tecnologias utilizadas
 
@@ -21,6 +23,14 @@ Este projeto é um sistema completo para gerenciar pedidos, controlar estoque e 
 # Implantação em produção
 
 * Banco de dados: PostgreSQL
+
+# Esteira CI/CD
+### Este projeto utiliza GitHub Actions para implementar a esteira CI/CD, garantindo um processo automatizado de integração e entrega contínua. O pipeline realiza as seguintes etapas:
+
+  1. Build: Compila o projeto usando Maven.
+  2. Testes: Executa os testes automatizados.
+  3. Containerização: Constrói a imagem Docker do projeto.
+  4. Deploy: Publica a imagem no Docker Hub.
 
 # Autor
 

@@ -15,7 +15,7 @@ import com.educandoweb.course.services.ProductService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/products")
+@RequestMapping(value = "/api/products")
 public class ProductResource {
 
 	@Autowired

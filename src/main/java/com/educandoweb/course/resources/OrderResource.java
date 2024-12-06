@@ -14,7 +14,7 @@ import com.educandoweb.course.services.OrderService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/orders")
+@RequestMapping(value = "/api/orders")
 public class OrderResource {
 
 	@Autowired

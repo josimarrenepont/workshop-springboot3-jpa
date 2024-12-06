@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jnrenepont/springboot_course:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/springboot_course
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 07111519
+
+  db:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    networks:
+      - springboot_course-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 07111519
+      POSTGRES_DB: springboot_course

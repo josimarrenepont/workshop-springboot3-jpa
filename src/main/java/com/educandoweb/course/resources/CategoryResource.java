@@ -14,7 +14,7 @@ import com.educandoweb.course.services.CategoryService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/api/categories")
+@RequestMapping(value = "/categories")
 public class CategoryResource {
 
 	@Autowired

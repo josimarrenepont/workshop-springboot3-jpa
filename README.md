@@ -4,12 +4,14 @@
 Este projeto é um sistema completo para gerenciar pedidos, controlar estoque e visualizar relatórios de vendas.
 
 ## Funcionalidades
-- Cadastro e gerenciamento de produtos, categorias e clientes.
-- Controle de estoque com redução automática em cada venda.
-- Geração de relatórios de vendas.
-- Integração com API RESTful.
-- Automação de builds e deploy com GitHub Actions.
-- Containerização com Docker e orquestração com Docker Compose.
+ - Cadastro e gerenciamento de produtos, categorias e clientes.
+ - Controle de estoque com redução automática em cada venda.
+ - Geração de relatórios de vendas.
+ - Integração com API RESTful.
+ - Automação de builds e deploy com GitHub Actions.
+ - Containerização com Docker e orquestração com Docker Compose.
+ - Cálculo de subtotais de pedidos, levando em consideração a quantidade e o preço dos produtos.
+ - Relacionamento entre pedidos e produtos foi aprimorado, agora utilizando a entidade OrderItem para representar os itens de cada pedido.
   
 # Tecnologias utilizadas
 

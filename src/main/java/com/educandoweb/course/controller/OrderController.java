@@ -48,8 +48,10 @@ public class OrderController {
     }
 
     @PostMapping(value = "/process")
-    public ResponseEntity<Order> processOrder(@RequestBody Order order) {
+    public ResponseEntity<OrderDto> processOrder(@RequestBody Order order) {
         Order processedOrder = service.processOrder(order);
-        return ResponseEntity.created(URI.create("/orders/" + processedOrder.getId())).body(processedOrder);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(processedOrder.getId()).toUri();
+        return ResponseEntity.created(uri).body(new OrderDto(processedOrder));
     }
 }

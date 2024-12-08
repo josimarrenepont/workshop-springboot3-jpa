@@ -7,6 +7,7 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.util.OrderUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,6 @@ public class OrderService {
 
 		// Processar estoque
 		stockService.validateStock(order.getItems());
-		stockService.updateStock(order.getItems());
 
 		// Processar pagamento
 		paymentService.processPayment(order);
@@ -44,7 +44,13 @@ public class OrderService {
 		Double total = OrderUtils.calculateTotal(order);
 		System.out.println("Total do pedido: " + total);
 
-		return repository.save(order);
+		order = repository.save(order);
+
+		paymentService.processPayment(order);
+
+		stockService.updateStock(order.getItems());
+
+		return order;
 	}
 
 	public Order update(Long id, Order updatedOrder) {
@@ -59,8 +65,10 @@ public class OrderService {
 	@Autowired
 	private PaymentService paymentService;
 
+	@Transactional
 	public Order processOrder(Order order) {
-		// Processar itens e estoque, conforme lógica existente
+
+		stockService.validateStock(order.getItems());
 		for (OrderItem item : order.getItems()) {
 			Product product = item.getProduct();
 			if (product.getQuantityInStock() < item.getQuantity()) {
@@ -68,12 +76,11 @@ public class OrderService {
 			}
 			product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
 		}
-		repository.save(order);
+		stockService.updateStock(order.getItems());
 
-		// Processar o pagamento usando PaymentService
 		paymentService.processPayment(order);
 
-		return order;
+		return repository.save(order);
 	}
 
 }

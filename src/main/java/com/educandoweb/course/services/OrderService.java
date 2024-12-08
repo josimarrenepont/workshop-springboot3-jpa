@@ -1,72 +1,79 @@
 package com.educandoweb.course.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
+import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
-import com.educandoweb.course.repositories.OrderItemRepository;
-import com.educandoweb.course.repositories.ProductRepository;
+import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
+import com.educandoweb.course.util.OrderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.educandoweb.course.entities.Order;
-import com.educandoweb.course.repositories.OrderRepository;
+import java.util.List;
 
 @Service
 public class OrderService {
-
 	@Autowired
 	private OrderRepository repository;
-	@Autowired
-	private OrderItemRepository orderItemRepository;
-	@Autowired
-	private ProductRepository productRepository;
 
-	public List<Order> findAll(){
+	@Autowired
+	private StockService stockService;
+
+	public List<Order> findAll() {
 		return repository.findAll();
 	}
-	
+
 	public Order findById(Long id) {
-		Optional<Order> obj = repository.findById(id);
-		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
-	}
-
-	public Order processOrder(Order order){
-		for(OrderItem item : order.getItems()){
-			Product product = item.getProduct();
-
-			if(product.getQunatityInStock() < item.getQuantity()){
-				throw new IllegalArgumentException(
-						"Insufficient stock for the product: " + product.getName() + item.getQuantity());
-			}
-			product.setQunatityInStock(product.getQunatityInStock() - item.getQuantity());
-		}
-		Order savedOrder = repository.save(order);
-		productRepository.saveAll(order.getItems().stream()
-				.map(OrderItem::getProduct).toList());
-
-		return savedOrder;
+		return repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public Order create(Order order) {
+		// Validações
+		OrderUtils.validateOrder(order);
+
+		// Processar estoque
+		stockService.validateStock(order.getItems());
+		stockService.updateStock(order.getItems());
+
+		// Processar pagamento
+		paymentService.processPayment(order);
+
+		// Calcular total do pedido
+		Double total = OrderUtils.calculateTotal(order);
+		System.out.println("Total do pedido: " + total);
+
 		return repository.save(order);
 	}
 
-	public Order altered(Long id, Order obj) {
-		Optional<Order> existingOrder = repository.findById(id);
-		if(existingOrder.isEmpty()){
-			throw new ResourceNotFoundException("Request not found for ID: " + id);
-		}
-		Order orderUpdate = existingOrder.get();
-		orderUpdate.setClient(obj.getClient());
-		orderUpdate.setMoment(obj.getMoment());
-		orderUpdate.setOrderStatus(obj.getOrderStatus());
-		orderUpdate.setPayment(obj.getPayment());
-
-		return repository.save(orderUpdate);
+	public Order update(Long id, Order updatedOrder) {
+		Order existingOrder = findById(id);
+		existingOrder.setClient(updatedOrder.getClient());
+		existingOrder.setMoment(updatedOrder.getMoment());
+		existingOrder.setOrderStatus(updatedOrder.getOrderStatus());
+		existingOrder.setPayment(updatedOrder.getPayment());
+		return repository.save(existingOrder);
 	}
+
+	@Autowired
+	private PaymentService paymentService;
+
+	public Order processOrder(Order order) {
+		// Processar itens e estoque, conforme lógica existente
+		for (OrderItem item : order.getItems()) {
+			Product product = item.getProduct();
+			if (product.getQuantityInStock() < item.getQuantity()) {
+				throw new IllegalArgumentException("Insufficient stock for product: " + product.getName());
+			}
+			product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
+		}
+		repository.save(order);
+
+		// Processar o pagamento usando PaymentService
+		paymentService.processPayment(order);
+
+		return order;
+	}
+
 }

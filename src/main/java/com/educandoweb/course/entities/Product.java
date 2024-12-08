@@ -20,7 +20,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_product")
 public class Product implements Serializable {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -29,28 +29,28 @@ public class Product implements Serializable {
 	private Double price;
 	private String imgUrl;
 
-	private Integer qunatityInStock;
-	
+	private Integer quantityInStock;
+
 	@ManyToMany
 	@JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name = "product_id"),
-	inverseJoinColumns = @JoinColumn(name = "category_id"))
+			inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private Set<Category> categories = new HashSet<>();
 
 	@OneToMany(mappedBy = "id.product")
 	private Set<OrderItem> items = new HashSet<>();
-	
+
 	public Product() {
 	}
 
 	public Product(Long id, String name, String description, Double price,
-				   String imgUrl, Integer qunatityInStock) {
+				   String imgUrl, Integer quantityInStock) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.imgUrl = imgUrl;
-		this.qunatityInStock = qunatityInStock;
+		this.quantityInStock = quantityInStock;
 	}
 
 	public Long getId() {
@@ -93,11 +93,14 @@ public class Product implements Serializable {
 		this.imgUrl = imgUrl;
 	}
 
-	public Integer getQunatityInStock(){ return qunatityInStock;}
-
-	public void setQunatityInStock (Integer qunatityInStock){
-		this.qunatityInStock = qunatityInStock;
+	public Integer getQuantityInStock() {
+		return quantityInStock;
 	}
+
+	public void setQuantityInStock(Integer quantityInStock) {
+		this.quantityInStock = quantityInStock;
+	}
+
 	public Set<Category> getCategories() {
 		return categories;
 	}
@@ -115,6 +118,7 @@ public class Product implements Serializable {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

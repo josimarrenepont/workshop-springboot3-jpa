@@ -1,4 +1,4 @@
-package com.educandoweb.course.resources;
+package com.educandoweb.course.controller;
 
 import java.net.URI;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/categories")
-public class CategoryResource {
+public class CategoryController {
 
 	@Autowired
 	private CategoryService service;

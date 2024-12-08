@@ -36,7 +36,7 @@ public class ProductService {
 		product.setPrice(obj.getPrice());
 		product.setDescription(obj.getDescription());
 		product.setImgUrl(obj.getImgUrl());
-		product.setQunatityInStock(obj.getQunatityInStock());
+		product.setQuantityInStock(obj.getQuantityInStock());
 
 		return repository.save(product);
 	}
@@ -53,7 +53,7 @@ public class ProductService {
 
 	private void updateData(Product entity, ProductDto obj) {
 		entity.setName(obj.getName());
-		entity.setQunatityInStock(obj.getQunatityInStock());
+		entity.setQuantityInStock(obj.getQuantityInStock());
 		entity.setDescription(obj.getDescription());
 		entity.setPrice(obj.getPrice());
 		entity.setImgUrl(obj.getImgUrl());

@@ -22,8 +22,10 @@ public class Payment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Instant moment;
+	private String status;
+	private String transactionId;
 	
-	@JsonIgnore // PRECISA COLOCAR @JSONIGNORE
+	@JsonIgnore
 	@OneToOne
 	@MapsId
 	private Order order;
@@ -31,11 +33,13 @@ public class Payment implements Serializable {
 	public Payment() {
 	}
 	
-	public Payment(Long id, Instant moment, Order order) {
+	public Payment(Long id, Instant moment, Order order, String status, String transactionId) {
 		super();
 		this.id = id;
 		this.moment = moment;
 		this.order = order;
+		this.status = status;
+		this.transactionId = transactionId;
 	}
 
 	public Long getId() {
@@ -60,6 +64,20 @@ public class Payment implements Serializable {
 
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+
+	public String getStatus() {return status;}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
 	@Override

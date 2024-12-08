@@ -1,7 +1,7 @@
 package com.educandoweb.course.productsTest;
 
 import com.educandoweb.course.entities.Product;
-import com.educandoweb.course.resources.ProductResource;
+import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.List;
 public class ProductControllerTest {
 
     @InjectMocks
-    private ProductResource productResource;
+    private ProductController productResource;
 
     @Mock
     private ProductService productService;

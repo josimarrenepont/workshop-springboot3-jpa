@@ -1,4 +1,4 @@
-package com.educandoweb.course.resources;
+package com.educandoweb.course.controller;
 
 import java.net.URI;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/products")
-public class ProductResource {
+public class ProductController {
 
 	@Autowired
 	private ProductService service;
@@ -51,6 +51,4 @@ public class ProductResource {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-
-
 }

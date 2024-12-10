@@ -56,4 +56,17 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$[0].id").value(product.getId()))
                 .andExpect(jsonPath("$[0].name").value(product.getName()));
     }
+    @Test
+    public void testFindById() throws Exception{
+        when(productService.findById(1L)).thenReturn(product);
+
+        ResultActions result = mockMvc.perform(get("/products/1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value(product.getName()));
+    }
+    
 }

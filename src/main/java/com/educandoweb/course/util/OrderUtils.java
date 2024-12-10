@@ -13,10 +13,10 @@ public class OrderUtils {
 
     public static void validateOrder(Order order) {
         if (order.getItems() == null || order.getItems().isEmpty()) {
-            throw new IllegalArgumentException("O pedido deve conter pelo menos um item.");
+            throw new IllegalArgumentException("The order must contain at least one item.");
         }
         if (order.getClient() == null) {
-            throw new IllegalArgumentException("O pedido deve estar associado a um cliente.");
+            throw new IllegalArgumentException("The order must be associated with a customer.");
         }
     }
 }

@@ -2,6 +2,7 @@ package com.educandoweb.course.productsTest;
 
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
+import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +16,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Collections;
 import java.util.List;
@@ -68,5 +71,20 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.id").value(product.getId()))
                 .andExpect(jsonPath("$.name").value(product.getName()));
     }
-    
+    @Test
+    public void testInsert() throws Exception{
+        when(productService.insert(any(ProductDto.class))).thenReturn(product);
+
+        String productJson = "{\"id\": 1, \"name\": \"Cell Phone\", \"description\": " +
+                "\"Iphone 15 pro\", \"price\": 1500.00, \"imgUrl\": \"image\", \"quantityInStock\": 7}";
+
+        ResultActions result = mockMvc.perform(post("/products")
+                        .content(productJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value(product.getName()));
+    }
 }

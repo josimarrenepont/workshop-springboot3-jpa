@@ -4,6 +4,7 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ProductControllerTest {
 
     @InjectMocks
-    private ProductController productResource;
+    private ProductController productController;
 
     @Mock
     private ProductService productService;
@@ -41,7 +42,7 @@ public class ProductControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(productResource).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
         product = new Product(1L, "Cell Phone", "Iphone 15 pro",
                 1500.00, "img", 7);
     }
@@ -86,5 +87,28 @@ public class ProductControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(product.getId()))
                 .andExpect(jsonPath("$.name").value(product.getName()));
+    }
+    @Test
+    public void testUpdate() throws Exception{
+
+        Product product = new Product(1L, "Cell Phone", "Iphone 15 pro", 1500.0, "imgUrl", 7);
+        ProductDto productDto = new ProductDto(product);
+
+        when(productService.update(eq(1L), any(ProductDto.class))).thenReturn(product);
+
+        String productJson = "{\"id\": 1, \"name\": \"Cell Phone\", \"description\": " +
+                "\"Iphone 15 pro\", \"price\": 1500.00, \"imgUrl\": \"image\", \"quantityInStock\": 7}";
+
+        ResultActions result = mockMvc.perform(put("/products/1")
+                        .content(productJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value(product.getName()))
+                .andExpect(jsonPath("$.description").value(product.getDescription()))
+                .andExpect(jsonPath("$.price").value(product.getPrice()))
+                .andExpect(jsonPath("$.quantityInStock").value(product.getQuantityInStock()));
     }
 }

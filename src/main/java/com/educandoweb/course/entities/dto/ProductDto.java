@@ -70,8 +70,8 @@ public class ProductDto {
         return quantityInStock;
     }
 
-    public void setQunatityInStock(Integer qunatityInStock) {
-        this.quantityInStock = qunatityInStock;
+    public void setQuantityInStock(Integer quantityInStock) {
+        this.quantityInStock = quantityInStock;
     }
 
     public Set<Product> getProductList() {

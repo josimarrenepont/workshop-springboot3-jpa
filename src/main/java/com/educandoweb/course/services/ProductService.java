@@ -41,22 +41,22 @@ public class ProductService {
 		return repository.save(product);
 	}
 
-	public Product update(Long id, ProductDto obj) {
+	public Product update(Long id, ProductDto productDto) {
 		try{
 			Product entity = repository.getReferenceById(id);
-			updateData(entity, obj);
+			updateData(entity, productDto);
 			return repository.save(entity);
 		} catch(EntityNotFoundException e){
-			throw new ResourceNotFoundException(id);
+			throw new ResourceNotFoundException("Resource not found for ID: " + id);
 		}
 	}
 
-	private void updateData(Product entity, ProductDto obj) {
-		entity.setName(obj.getName());
-		entity.setQuantityInStock(obj.getQuantityInStock());
-		entity.setDescription(obj.getDescription());
-		entity.setPrice(obj.getPrice());
-		entity.setImgUrl(obj.getImgUrl());
+	private void updateData(Product entity, ProductDto productDto) {
+		entity.setName(productDto.getName());
+		entity.setQuantityInStock(productDto.getQuantityInStock());
+		entity.setDescription(productDto.getDescription());
+		entity.setPrice(productDto.getPrice());
+		entity.setImgUrl(productDto.getImgUrl());
 	}
 
 	public void delete(Long id) {

@@ -26,13 +26,13 @@ jobs:
       run: mvn clean install
 
     - name: Build Docker image
-      run: docker build -t jnrenepont/springboot_course:latest .
+      run: docker build -t my-app .
 
     - name: Push Docker image to Docker Hub
       run: |
         echo ${{ secrets.DOCKER_USERNAME }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-        docker tag springboot_course ${{ secrets.DOCKER_USERNAME }}/springboot_course:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/springboot_course:latest
+        docker tag my-app ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

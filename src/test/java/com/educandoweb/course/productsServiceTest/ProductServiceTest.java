@@ -40,7 +40,7 @@ public class ProductServiceTest {
         MockitoAnnotations.openMocks(this);
     }
     @Test
-    public void testFindAll(){
+    void testFindAll(){
 
         when(repository.searchAll()).thenReturn(List.of(product));
 
@@ -55,7 +55,7 @@ public class ProductServiceTest {
         verify(repository, times(1)).searchAll();
     }
     @Test
-    public void testFindById(){
+    void testFindById(){
         when(repository.findById(1L)).thenReturn(Optional.of(product));
 
         Product result = productService.findById(1L);
@@ -67,7 +67,7 @@ public class ProductServiceTest {
         verify(repository, times(1)).findById(1L);
     }
     @Test
-    public void findById_ResourceNotFound(){
+    void findById_ResourceNotFound(){
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
@@ -76,7 +76,7 @@ public class ProductServiceTest {
         verify(repository, times(1)).findById(1L);
     }
     @Test
-    public void testInsert(){
+    void testInsert(){
         when(repository.save(any(Product.class))).thenReturn(product);
 
         Product result = productService.insert(new ProductDto(product));
@@ -87,5 +87,26 @@ public class ProductServiceTest {
 
         verify(repository, times(1)).save(any(Product.class));
 
+    }
+    @Test
+    void testUpdate(){
+        when(repository.getReferenceById(1L)).thenReturn(product);
+        when(repository.save(any(Product.class))).thenReturn(product);
+
+        Product result = productService.update(1L, productDto);
+
+        assertNotNull(result);
+        assertEquals(productDto.getName(), result.getName());
+
+        verify(repository, times(1)).getReferenceById(1L);
+        verify(repository, times(1)).save(any(Product.class));
+    }
+    @Test
+    void testDelete(){
+        doNothing().when(repository).deleteById(1L);
+
+        productService.delete(1L);
+
+        verify(repository, times(1)).deleteById(1L);
     }
 }

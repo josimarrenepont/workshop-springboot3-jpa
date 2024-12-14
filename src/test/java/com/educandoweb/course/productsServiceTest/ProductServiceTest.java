@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -51,5 +52,17 @@ public class ProductServiceTest {
         assertEquals(product.getName(), result.get(0).getName());
 
         verify(repository, times(1)).searchAll();
+    }
+    @Test
+    public void testFindById(){
+        when(repository.findById(1L)).thenReturn(Optional.of(product));
+
+        Product result = productService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(product.getId(), result.getId());;
+        assertEquals(product.getName(), result.getName());
+
+        verify(repository, times(1)).findById(1L);
     }
 }

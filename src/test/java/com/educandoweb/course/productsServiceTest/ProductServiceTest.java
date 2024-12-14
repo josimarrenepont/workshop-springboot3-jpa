@@ -75,4 +75,17 @@ public class ProductServiceTest {
         });
         verify(repository, times(1)).findById(1L);
     }
+    @Test
+    public void testInsert(){
+        when(repository.save(any(Product.class))).thenReturn(product);
+
+        Product result = productService.insert(new ProductDto(product));
+
+        assertNotNull(result);
+        assertEquals(product.getName(), result.getName());
+        assertEquals(product.getPrice(), result.getPrice());
+
+        verify(repository, times(1)).save(any(Product.class));
+
+    }
 }

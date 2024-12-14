@@ -4,6 +4,7 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.ProductService;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,26 @@ public class ProductServiceTest {
         doNothing().when(repository).deleteById(1L);
 
         productService.delete(1L);
+
+        verify(repository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testDeleteResourceNotFoundException(){
+        doThrow(ResourceNotFoundException.class).when(repository).deleteById(1L);
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.delete(1L);
+        });
+
+        verify(repository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testDeleteDatabaseException(){
+        doThrow(DatabaseException.class).when(repository).deleteById(1L);
+
+        assertThrows(DatabaseException.class, () -> {
+            productService.delete(1L);
+        });
 
         verify(repository, times(1)).deleteById(1L);
     }

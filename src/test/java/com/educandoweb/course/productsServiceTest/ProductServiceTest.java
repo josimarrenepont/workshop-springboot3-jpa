@@ -4,6 +4,7 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.ProductService;
+import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,6 +64,15 @@ public class ProductServiceTest {
         assertEquals(product.getId(), result.getId());;
         assertEquals(product.getName(), result.getName());
 
+        verify(repository, times(1)).findById(1L);
+    }
+    @Test
+    public void findById_ResourceNotFound(){
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.findById(1L);
+        });
         verify(repository, times(1)).findById(1L);
     }
 }

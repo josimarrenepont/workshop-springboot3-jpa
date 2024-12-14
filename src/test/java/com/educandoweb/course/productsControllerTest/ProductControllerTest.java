@@ -1,10 +1,9 @@
-package com.educandoweb.course.productsTest;
+package com.educandoweb.course.productsControllerTest;
 
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

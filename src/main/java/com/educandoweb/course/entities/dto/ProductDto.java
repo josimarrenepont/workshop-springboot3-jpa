@@ -15,7 +15,7 @@ public class ProductDto {
 
     private Set<Product> productList;
 
-    public ProductDto(){}
+    public ProductDto(long l, String cellPhone, String s, double v, String imgUrl, int i){}
 
     public ProductDto(Product product) {
         this.id = product.getId();

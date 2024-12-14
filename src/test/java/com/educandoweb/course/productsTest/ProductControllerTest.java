@@ -17,11 +17,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Collections;
@@ -110,5 +110,16 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.description").value(product.getDescription()))
                 .andExpect(jsonPath("$.price").value(product.getPrice()))
                 .andExpect(jsonPath("$.quantityInStock").value(product.getQuantityInStock()));
+    }
+    @Test
+    public void testDelete() throws Exception{
+        Long productId = 1L;
+        doNothing().when(productService).delete(productId);
+
+        ResultActions result = mockMvc.perform(delete("/products/1", productId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNoContent());
+        verify(productService, times(1)).delete(productId);
     }
 }

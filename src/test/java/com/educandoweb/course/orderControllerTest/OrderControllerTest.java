@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.cbor.MappingJackson2CborHttpMessageConverter;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -60,6 +60,7 @@ public class OrderControllerTest {
 
         user = new User(1L, "user", "user@email.com", "1234567", "1234567");
         order = new Order(1L, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.PAID, user);
+
     }
     @Test
     void testFindAll() throws Exception {
@@ -73,5 +74,18 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$[0].id").value(order.getId()))
                 .andExpect(jsonPath("$[0].moment").value(order.getMoment().toString()))
                 .andExpect(jsonPath("$[0].orderStatus").value(order.getOrderStatus().toString()));
+    }
+    @Test
+    void testFindById() throws Exception{
+        when(orderService.findById(1L)).thenReturn(order);
+
+        ResultActions result = mockMvc.perform(get("/orders/1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(order.getId()))
+                .andExpect(jsonPath("$.moment").value(order.getMoment().toString()))
+                .andExpect(jsonPath("$.orderStatus").value(order.getOrderStatus().toString()));
     }
 }

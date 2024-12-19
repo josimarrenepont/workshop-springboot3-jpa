@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
 import java.time.Instant;
@@ -102,6 +102,24 @@ public class OrderControllerTest {
             .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(order.getId()))
+                .andExpect(jsonPath("$.moment").value(order.getMoment().toString()))
+                .andExpect(jsonPath("$.orderStatus").value(order.getOrderStatus().toString()));
+    }
+    @Test
+    void testUpdate() throws Exception{
+        Order order = new Order(1L, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.PAID, user);
+        OrderDto orderDto = new OrderDto(order);
+        when(orderService.update(eq(1L), any(Order.class))).thenReturn(order);
+
+        String orderJson = "{\"moment\": \"2019-06-20T19:53:07Z\", \"orderStatus\": \"PAID\", \"client\": {\"id\": 1}}";
+
+        ResultActions result = mockMvc.perform(put("/orders/1")
+                .content(orderJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.moment").value(order.getMoment().toString()))

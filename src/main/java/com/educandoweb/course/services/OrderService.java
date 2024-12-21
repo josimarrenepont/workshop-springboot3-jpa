@@ -5,10 +5,13 @@ import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.repositories.OrderRepository;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.util.OrderUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,4 +86,13 @@ public class OrderService {
 		return repository.save(order);
 	}
 
+    public void delete(Long id) {
+		try{
+			repository.deleteById(id);
+		} catch(EmptyResultDataAccessException e){
+			throw new ResourceNotFoundException(id);
+		} catch (DataIntegrityViolationException e){
+			throw new DatabaseException(e.getMessage());
+		}
+    }
 }

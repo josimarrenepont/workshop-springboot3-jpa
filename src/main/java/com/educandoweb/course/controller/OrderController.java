@@ -54,4 +54,9 @@ public class OrderController {
                 .path("/{id}").buildAndExpand(processedOrder.getId()).toUri();
         return ResponseEntity.created(uri).body(new OrderDto(processedOrder));
     }
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<OrderDto> delete(@PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

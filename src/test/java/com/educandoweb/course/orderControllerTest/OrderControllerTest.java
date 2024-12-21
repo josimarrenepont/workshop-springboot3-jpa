@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -30,7 +31,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
-import static org.mockito.Mockito.when;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,5 +125,16 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.id").value(order.getId()))
                 .andExpect(jsonPath("$.moment").value(order.getMoment().toString()))
                 .andExpect(jsonPath("$.orderStatus").value(order.getOrderStatus().toString()));
+    }
+    @Test
+    void testDelete() throws Exception{
+        Long orderId = 1L;
+        doNothing().when(orderService).delete(orderId);
+
+        ResultActions result = mockMvc.perform(delete("/orders/1", orderId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNoContent());
+        verify(orderService, times(1)).delete(orderId);
     }
 }

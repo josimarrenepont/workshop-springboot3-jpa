@@ -86,4 +86,19 @@ public class OrderServiceTest {
 
         verify(repository, times(1)).findById(1L);
     }
+    @Test
+    void testCreate(){
+        when(repository.save(any(Order.class))).thenReturn(order);
+
+        Order result = orderService.create(order);
+
+        assertNotNull(result);
+        assertEquals(order.getClient(), result.getClient());
+        assertEquals(order.getItems(), result.getItems());
+        assertEquals(order.getPayment(), result.getPayment());
+        assertEquals(order.getMoment(), result.getMoment());
+        assertEquals(order.getOrderStatus(), result.getOrderStatus());
+
+        verify(repository, times(1)).save(any(Order.class));
+    }
 }

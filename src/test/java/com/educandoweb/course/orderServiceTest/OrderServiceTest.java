@@ -9,6 +9,7 @@ import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.services.OrderService;
 import com.educandoweb.course.services.PaymentService;
 import com.educandoweb.course.services.StockService;
+import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,11 +21,9 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +65,7 @@ public class OrderServiceTest {
         verify(repository, times(1)).findAll();
     }
     @Test
-    void testFindById() throws Exception{
+    void testFindById(){
         when(repository.findById(1L)).thenReturn(Optional.of(order));
 
         Order result = orderService.findById(1L);
@@ -74,6 +73,16 @@ public class OrderServiceTest {
         assertNotNull(result);
         assertEquals(order.getId(), result.getId());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
+
+        verify(repository, times(1)).findById(1L);
+    }
+    @Test
+    void testFindById_ResourceNotFound(){
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+           orderService.findById(1L);
+        });
 
         verify(repository, times(1)).findById(1L);
     }

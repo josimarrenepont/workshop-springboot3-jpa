@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,5 +64,17 @@ public class OrderServiceTest {
         assertEquals(1, result.size());
         assertEquals(order.getId(), result.get(0).getId());
         verify(repository, times(1)).findAll();
+    }
+    @Test
+    void testFindById() throws Exception{
+        when(repository.findById(1L)).thenReturn(Optional.of(order));
+
+        Order result = orderService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(order.getId(), result.getId());
+        assertEquals(order.getOrderStatus(), result.getOrderStatus());
+
+        verify(repository, times(1)).findById(1L);
     }
 }

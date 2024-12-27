@@ -101,4 +101,22 @@ public class OrderServiceTest {
 
         verify(repository, times(1)).save(any(Order.class));
     }
+    @Test
+    void testUpdate(){
+        when(repository.findById(1L)).thenReturn(Optional.of(order));
+        when(repository.save(any(Order.class))).thenReturn(order);
+
+        Order result = orderService.update(1L, order);
+
+        assertNotNull(result);
+        assertEquals(order.getId(), result.getId());
+        assertEquals(order.getOrderStatus(), result.getOrderStatus());
+        assertEquals(order.getItems(), result.getItems());
+        assertEquals(order.getMoment(), result.getMoment());
+        assertEquals(order.getClient(), result.getClient());
+        assertEquals(order.getPayment(), result.getPayment());
+
+        verify(repository, times(1)).findById(1L);
+        verify(repository, times(1)).save(any(Order.class));
+    }
 }

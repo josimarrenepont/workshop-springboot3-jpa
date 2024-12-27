@@ -9,6 +9,7 @@ import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.services.OrderService;
 import com.educandoweb.course.services.PaymentService;
 import com.educandoweb.course.services.StockService;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,5 +119,32 @@ public class OrderServiceTest {
 
         verify(repository, times(1)).findById(1L);
         verify(repository, times(1)).save(any(Order.class));
+    }
+    @Test
+    void testDelete(){
+        doNothing().when(repository).deleteById(1L);
+
+        orderService.delete(1L);
+
+        verify(repository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testDelete_ResourceNotFound(){
+        doThrow(ResourceNotFoundException.class).when(repository).deleteById(1L);
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            repository.deleteById(1L);
+        });
+
+        verify(repository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testDeleteDatabaseException(){
+        doThrow(DatabaseException.class).when(repository).deleteById(1L);
+
+        assertThrows(DatabaseException.class, () -> {
+            repository.deleteById(1L);
+        });
+        verify(repository, times(1)).deleteById(1L);
     }
 }

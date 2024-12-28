@@ -14,7 +14,7 @@ public class PaymentService {
 
     public Payment processPayment(Order order) {
         if (order.getPayment() == null) {
-            throw new IllegalArgumentException("Os detalhes do pagamento estão ausentes para o pedido.");
+            throw new IllegalArgumentException("Payment details are missing for the order.");
         }
 
         Payment payment = order.getPayment();

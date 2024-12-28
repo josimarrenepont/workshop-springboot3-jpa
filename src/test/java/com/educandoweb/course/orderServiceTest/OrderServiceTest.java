@@ -1,11 +1,9 @@
 package com.educandoweb.course.orderServiceTest;
 
-import com.educandoweb.course.entities.Order;
-import com.educandoweb.course.entities.OrderItem;
-import com.educandoweb.course.entities.Product;
-import com.educandoweb.course.entities.User;
+import com.educandoweb.course.entities.*;
 import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderRepository;
+import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.OrderService;
 import com.educandoweb.course.services.PaymentService;
 import com.educandoweb.course.services.StockService;
@@ -16,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
@@ -36,6 +35,8 @@ public class OrderServiceTest {
     private StockService stockService;
     @Mock
     private PaymentService paymentService;
+    @Mock
+    private ProductRepository productRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -47,12 +48,17 @@ public class OrderServiceTest {
 
     @BeforeEach
     void SetUp(){
+        MockitoAnnotations.openMocks(this);
+
         user = new User(1L, "user", "user@email.com", "1234567", "1234567");
         order = new Order(1L, Instant.parse("2019-06-20T15:20:01Z"), OrderStatus.PAID, user);
         product = new Product(1L, "Cell Phone", "Iphone 15 pro",
                 1500.0, "imgUrl", 7);
         orderItem = new OrderItem(null, product, 2, product.getPrice());
         order.setItems(Collections.singleton(orderItem));
+        Payment payment = new Payment();
+        payment.setStatus("PENDING");
+        order.setPayment(payment);
     }
     @Test
     void testFindAll(){
@@ -129,7 +135,7 @@ public class OrderServiceTest {
         verify(repository, times(1)).deleteById(1L);
     }
     @Test
-    void testDelete_ResourceNotFound(){
+    void testDeleteResourceNotFound(){
         doThrow(ResourceNotFoundException.class).when(repository).deleteById(1L);
 
         assertThrows(ResourceNotFoundException.class, () -> {
@@ -146,5 +152,20 @@ public class OrderServiceTest {
             repository.deleteById(1L);
         });
         verify(repository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testProcessOrder(){
+        when(repository.save(order)).thenReturn(order);
+
+        Order result = orderService.processOrder(order);
+
+        assertNotNull(result);
+        assertEquals(order.getItems(), result.getItems());
+        assertEquals(order.getPayment().getStatus(), "PENDING");
+
+        verify(stockService, times(1)).validateStock(order.getItems());
+        verify(stockService, times(1)).updateStock(order.getItems());
+        verify(paymentService, times(1)).processPayment(order);
+        verify(repository, times(1)).save(order);
     }
 }

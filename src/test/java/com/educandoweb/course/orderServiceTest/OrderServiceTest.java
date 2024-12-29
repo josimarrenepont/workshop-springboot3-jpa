@@ -21,7 +21,9 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -167,5 +169,18 @@ public class OrderServiceTest {
         verify(stockService, times(1)).updateStock(order.getItems());
         verify(paymentService, times(1)).processPayment(order);
         verify(repository, times(1)).save(order);
+    }
+    @Test
+    void testProcessOrderInsufficientStock(){
+        product.setQuantityInStock(2);
+        orderItem.setProduct(product);
+        orderItem.setQuantity(5);
+        order.getItems().stream().map(OrderItem::getOrder).collect(Collectors.toSet());
+
+        doNothing().when(stockService).validateStock(order.getItems());
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> orderService.processOrder(order));
+        assertEquals("Insufficient stock for product: " + product.getName(), exception.getMessage());
     }
 }

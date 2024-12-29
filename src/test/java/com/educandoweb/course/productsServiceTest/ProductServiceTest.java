@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class ProductServiceTest {
 
     @Mock
-    private ProductRepository repository;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -42,7 +42,7 @@ public class ProductServiceTest {
     @Test
     void testFindAll(){
 
-        when(repository.searchAll()).thenReturn(List.of(product));
+        when(productRepository.searchAll()).thenReturn(List.of(product));
 
         List<Product> result = productService.findAll();
 
@@ -52,11 +52,11 @@ public class ProductServiceTest {
         assertEquals(product.getId(), result.get(0).getId());
         assertEquals(product.getName(), result.get(0).getName());
 
-        verify(repository, times(1)).searchAll();
+        verify(productRepository, times(1)).searchAll();
     }
     @Test
     void testFindById(){
-        when(repository.findById(1L)).thenReturn(Optional.of(product));
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
         Product result = productService.findById(1L);
 
@@ -64,20 +64,20 @@ public class ProductServiceTest {
         assertEquals(product.getId(), result.getId());;
         assertEquals(product.getName(), result.getName());
 
-        verify(repository, times(1)).findById(1L);
+        verify(productRepository, times(1)).findById(1L);
     }
     @Test
     void findById_ResourceNotFound(){
-        when(repository.findById(1L)).thenReturn(Optional.empty());
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             productService.findById(1L);
         });
-        verify(repository, times(1)).findById(1L);
+        verify(productRepository, times(1)).findById(1L);
     }
     @Test
     void testInsert(){
-        when(repository.save(any(Product.class))).thenReturn(product);
+        when(productRepository.save(any(Product.class))).thenReturn(product);
 
         Product result = productService.insert(new ProductDto(product));
 
@@ -85,48 +85,48 @@ public class ProductServiceTest {
         assertEquals(product.getName(), result.getName());
         assertEquals(product.getPrice(), result.getPrice());
 
-        verify(repository, times(1)).save(any(Product.class));
+        verify(productRepository, times(1)).save(any(Product.class));
 
     }
     @Test
     void testUpdate(){
-        when(repository.getReferenceById(1L)).thenReturn(product);
-        when(repository.save(any(Product.class))).thenReturn(product);
+        when(productRepository.getReferenceById(1L)).thenReturn(product);
+        when(productRepository.save(any(Product.class))).thenReturn(product);
 
         Product result = productService.update(1L, productDto);
 
         assertNotNull(result);
         assertEquals(productDto.getName(), result.getName());
 
-        verify(repository, times(1)).getReferenceById(1L);
-        verify(repository, times(1)).save(any(Product.class));
+        verify(productRepository, times(1)).getReferenceById(1L);
+        verify(productRepository, times(1)).save(any(Product.class));
     }
     @Test
     void testDelete(){
-        doNothing().when(repository).deleteById(1L);
+        doNothing().when(productRepository).deleteById(1L);
 
         productService.delete(1L);
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(productRepository, times(1)).deleteById(1L);
     }
     @Test
     void testDeleteResourceNotFoundException(){
-        doThrow(ResourceNotFoundException.class).when(repository).deleteById(1L);
+        doThrow(ResourceNotFoundException.class).when(productRepository).deleteById(1L);
 
         assertThrows(ResourceNotFoundException.class, () -> {
             productService.delete(1L);
         });
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(productRepository, times(1)).deleteById(1L);
     }
     @Test
     void testDeleteDatabaseException(){
-        doThrow(DatabaseException.class).when(repository).deleteById(1L);
+        doThrow(DatabaseException.class).when(productRepository).deleteById(1L);
 
         assertThrows(DatabaseException.class, () -> {
             productService.delete(1L);
         });
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(productRepository, times(1)).deleteById(1L);
     }
 }

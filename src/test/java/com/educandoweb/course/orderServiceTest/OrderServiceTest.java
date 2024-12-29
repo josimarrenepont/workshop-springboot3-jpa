@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 public class OrderServiceTest {
 
     @Mock
-    private OrderRepository repository;
+    private OrderRepository orderRepository;
     @Mock
     private StockService stockService;
     @Mock
@@ -64,18 +64,18 @@ public class OrderServiceTest {
     }
     @Test
     void testFindAll(){
-        when(repository.findAll()).thenReturn(Collections.singletonList(order));
+        when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
 
         List<Order> result = orderService.findAll();
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(order.getId(), result.get(0).getId());
-        verify(repository, times(1)).findAll();
+        verify(orderRepository, times(1)).findAll();
     }
     @Test
     void testFindById(){
-        when(repository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
         Order result = orderService.findById(1L);
 
@@ -83,21 +83,21 @@ public class OrderServiceTest {
         assertEquals(order.getId(), result.getId());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
 
-        verify(repository, times(1)).findById(1L);
+        verify(orderRepository, times(1)).findById(1L);
     }
     @Test
     void testFindById_ResourceNotFound(){
-        when(repository.findById(1L)).thenReturn(Optional.empty());
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
            orderService.findById(1L);
         });
 
-        verify(repository, times(1)).findById(1L);
+        verify(orderRepository, times(1)).findById(1L);
     }
     @Test
     void testCreate(){
-        when(repository.save(any(Order.class))).thenReturn(order);
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
 
         Order result = orderService.create(order);
 
@@ -108,12 +108,12 @@ public class OrderServiceTest {
         assertEquals(order.getMoment(), result.getMoment());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
 
-        verify(repository, times(1)).save(any(Order.class));
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
     @Test
     void testUpdate(){
-        when(repository.findById(1L)).thenReturn(Optional.of(order));
-        when(repository.save(any(Order.class))).thenReturn(order);
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
 
         Order result = orderService.update(1L, order);
 
@@ -125,39 +125,39 @@ public class OrderServiceTest {
         assertEquals(order.getClient(), result.getClient());
         assertEquals(order.getPayment(), result.getPayment());
 
-        verify(repository, times(1)).findById(1L);
-        verify(repository, times(1)).save(any(Order.class));
+        verify(orderRepository, times(1)).findById(1L);
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
     @Test
     void testDelete(){
-        doNothing().when(repository).deleteById(1L);
+        doNothing().when(orderRepository).deleteById(1L);
 
         orderService.delete(1L);
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(orderRepository, times(1)).deleteById(1L);
     }
     @Test
     void testDeleteResourceNotFound(){
-        doThrow(ResourceNotFoundException.class).when(repository).deleteById(1L);
+        doThrow(ResourceNotFoundException.class).when(orderRepository).deleteById(1L);
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            repository.deleteById(1L);
+            orderRepository.deleteById(1L);
         });
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(orderRepository, times(1)).deleteById(1L);
     }
     @Test
     void testDeleteDatabaseException(){
-        doThrow(DatabaseException.class).when(repository).deleteById(1L);
+        doThrow(DatabaseException.class).when(orderRepository).deleteById(1L);
 
         assertThrows(DatabaseException.class, () -> {
-            repository.deleteById(1L);
+            orderRepository.deleteById(1L);
         });
-        verify(repository, times(1)).deleteById(1L);
+        verify(orderRepository, times(1)).deleteById(1L);
     }
     @Test
     void testProcessOrder(){
-        when(repository.save(order)).thenReturn(order);
+        when(orderRepository.save(order)).thenReturn(order);
 
         Order result = orderService.processOrder(order);
 
@@ -168,7 +168,7 @@ public class OrderServiceTest {
         verify(stockService, times(1)).validateStock(order.getItems());
         verify(stockService, times(1)).updateStock(order.getItems());
         verify(paymentService, times(1)).processPayment(order);
-        verify(repository, times(1)).save(order);
+        verify(orderRepository, times(1)).save(order);
     }
     @Test
     void testProcessOrderInsufficientStock(){

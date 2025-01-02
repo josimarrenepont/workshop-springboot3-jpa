@@ -1,12 +1,14 @@
 package com.educandoweb.course.stockServiceTest;
 
 import com.educandoweb.course.entities.*;
+import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderItemRepository;
 import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.OrderService;
 import com.educandoweb.course.services.StockService;
+import com.educandoweb.course.services.exceptions.InsufficientStockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,11 +68,20 @@ public class StockServiceTest {
     void stockServiceValidateTest_throwsException_whenInsufficientStock(){
         product.setQuantityInStock(3);
 
-        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () ->
+        InsufficientStockException insufficientStock = assertThrows(InsufficientStockException.class, () ->
                 stockService.validateStock(order.getItems()));
 
         assertEquals("Insufficient stock for product: " + product.getName(),
-                illegalArgumentException.getMessage());
+                insufficientStock.getMessage());
     }
+    @Test
+    void stockServiceUpdateStockTest(){
+        when(productRepository.save(any(Product.class))).thenReturn(orderItem.getProduct());
 
+        stockService.updateStock(order.getItems());
+
+        verify(productRepository, times(1)).save(any(Product.class));
+
+        assertEquals(2, product.getQuantityInStock());
+    }
 }

@@ -61,5 +61,15 @@ public class StockServiceTest {
 
         assertDoesNotThrow(() -> stockService.validateStock(order.getItems()));
     }
-    
+    @Test
+    void stockServiceValidateTest_throwsException_whenInsufficientStock(){
+        product.setQuantityInStock(3);
+
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () ->
+                stockService.validateStock(order.getItems()));
+
+        assertEquals("Insufficient stock for product: " + product.getName(),
+                illegalArgumentException.getMessage());
+    }
+
 }

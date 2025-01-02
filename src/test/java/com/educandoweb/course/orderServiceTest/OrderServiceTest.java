@@ -177,7 +177,8 @@ public class OrderServiceTest {
         orderItem.setQuantity(5);
         order.getItems().stream().map(OrderItem::getOrder).collect(Collectors.toSet());
 
-        doNothing().when(stockService).validateStock(order.getItems());
+        doThrow(new IllegalArgumentException("Insufficient stock for product: " + product.getName()))
+                .when(stockService).validateStock(order.getItems());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> orderService.processOrder(order));

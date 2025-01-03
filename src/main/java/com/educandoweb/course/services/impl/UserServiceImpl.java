@@ -8,6 +8,7 @@ import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,9 +21,11 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
     @Override
-    public List<UserDto> findAll(){
-        return userRepository.findAll().stream()
-                .map(UserDto::new).collect(Collectors.toList());
+    public List<UserDto> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(UserDto::new)
+                .toList();
     }
     @Override
     public UserDto findById(Long id){

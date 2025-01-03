@@ -38,7 +38,7 @@ public class StockService {
             try {
                 productRepository.save(product);
             } catch (Exception e){
-                throw new StockUpdateException("Error updating stock forproduct " + product.getName(), e);
+                throw new StockUpdateException("Error updating stock for product " + product.getName(), e);
             }
         }
     }

@@ -14,7 +14,11 @@ public class UserDto {
 
     private Set<User> userList;
 
-    public UserDto(){}
+    public UserDto(Long id, String name, String email){
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
 
     public UserDto(User user) {
         this.id = user.getId();

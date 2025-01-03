@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,6 +50,14 @@ public class UserServiceImplTest {
         assertEquals(user.getName(), dto.getName());
         assertEquals(user.getEmail(), dto.getEmail());
         verify(userRepository, times(1)).findAll();
+    }
+    @Test
+    void testFindById(){
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        UserDto result = userService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(user.getId(), result.getId());
     }
     
 }

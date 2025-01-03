@@ -3,7 +3,6 @@ package com.educandoweb.course.userServiceImplTest;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import com.educandoweb.course.repositories.UserRepository;
-import com.educandoweb.course.services.UserService;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -32,10 +29,12 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     private User user;
+    private UserDto userDto;
 
     @BeforeEach
     void setUp(){
         user = new User(1L, "user", "user@email.com", "1234567", "1234567");
+        userDto = new UserDto(user);
     }
     @Test
     void testFindAll(){
@@ -73,5 +72,20 @@ public class UserServiceImplTest {
 
         assertNotNull(result);
         assertEquals(userDto.getName(), result.getName());
+    }
+    @Test
+    void testUpdate(){
+        when(userRepository.getReferenceById(1L)).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        userDto.setEmail("marcos@gmail.com");
+        UserDto result = userService.update( 1L, userDto);
+
+        assertNotNull(result);
+        assertEquals(userDto.getPhone(), result.getPhone());
+        assertEquals(userDto.getPassword(), result.getPassword());
+        assertEquals(userDto.getEmail(), result.getEmail());
+        verify(userRepository, times(1)).getReferenceById(1L);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 }

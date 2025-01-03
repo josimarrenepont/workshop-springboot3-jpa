@@ -8,9 +8,8 @@ import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,8 +35,8 @@ public class UserServiceImpl implements UserService {
     public UserDto insert(UserDto userDto){
         User user = new User();
         user.setName(userDto.getName());
-        user.setPhone(user.getPhone());
-        user.setEmail(user.getEmail());
+        user.setPhone(userDto.getPhone());
+        user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
 
         return new UserDto(userRepository.save(user));
@@ -53,14 +52,14 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long id, UserDto userDto){
         try {
             User user = userRepository.getReferenceById(id);
-            updateDate(user, userDto);
+            updateUserFields(user, userDto);
             return new UserDto(userRepository.save(user));
         } catch (EntityNotFoundException e){
             throw new ResourceNotFoundException("User not found with ID: " + id);
         }
     }
 
-    private void updateDate(User entity, UserDto obj) {
+    private void updateUserFields(User entity, UserDto obj) {
         entity.setPhone(obj.getPhone());
         entity.setEmail(obj.getEmail());
         entity.setPassword(obj.getPassword());

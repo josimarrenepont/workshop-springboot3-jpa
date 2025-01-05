@@ -3,6 +3,7 @@ package com.educandoweb.course.userServiceImplTest;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import com.educandoweb.course.repositories.UserRepository;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,6 +106,15 @@ public class UserServiceImplTest {
             userService.delete(1L);
         });
 
+        verify(userRepository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testDeleteDatabaseException(){
+        doThrow(DatabaseException.class).when(userRepository).deleteById(1L);
+
+        assertThrows(DatabaseException.class, () -> {
+            userService.delete(1L);
+        });
         verify(userRepository, times(1)).deleteById(1L);
     }
 }

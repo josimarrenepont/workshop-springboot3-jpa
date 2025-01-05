@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import com.educandoweb.course.entities.dto.UserDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.educandoweb.course.entities.User;
 import com.educandoweb.course.services.UserService;
 
 @RestController
@@ -35,9 +35,9 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<UserDto> insert(@RequestBody UserDto userDto){
+	public ResponseEntity<UserDto> insert(@RequestBody @Validated UserDto userDto){
 		UserDto createdUser = userService.insert(userDto);
-		return ResponseEntity.created(URI.create("/users" + createdUser.getId())).body(createdUser);
+		return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
 	}
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id){

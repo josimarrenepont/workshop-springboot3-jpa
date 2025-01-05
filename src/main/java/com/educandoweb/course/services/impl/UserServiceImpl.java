@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
                 .map(UserDto::new)
                 .toList();
     }
+
     @Override
     public UserDto findById(Long id){
         return userRepository.findById(id).map(UserDto::new)

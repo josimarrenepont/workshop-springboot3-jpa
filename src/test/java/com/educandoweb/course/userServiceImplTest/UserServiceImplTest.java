@@ -96,4 +96,15 @@ public class UserServiceImplTest {
 
         verify(userRepository, times(1)).deleteById(1L);
     }
+    @Test
+    void testDeleteResourceNotFoundException(){
+
+        doThrow(ResourceNotFoundException.class).when(userRepository).deleteById(1L);
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            userService.delete(1L);
+        });
+
+        verify(userRepository, times(1)).deleteById(1L);
+    }
 }

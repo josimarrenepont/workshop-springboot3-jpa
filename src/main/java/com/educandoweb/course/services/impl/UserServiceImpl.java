@@ -4,11 +4,13 @@ import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.UserService;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,8 @@ public class UserServiceImpl implements UserService {
             log.info("User with id {} has been successfully deletec. ", id);
         } catch(EmptyResultDataAccessException e){
             throw new ResourceNotFoundException("User not found with id " + id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException(e.getMessage());
         }
     }
     @Override

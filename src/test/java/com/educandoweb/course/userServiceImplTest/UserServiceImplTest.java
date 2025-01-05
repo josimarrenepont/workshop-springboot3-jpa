@@ -88,4 +88,12 @@ public class UserServiceImplTest {
         verify(userRepository, times(1)).getReferenceById(1L);
         verify(userRepository, times(1)).save(any(User.class));
     }
+    @Test
+    void testDelete(){
+        doNothing().when(userRepository).deleteById(1L);
+
+            userService.delete(1L);
+
+        verify(userRepository, times(1)).deleteById(1L);
+    }
 }

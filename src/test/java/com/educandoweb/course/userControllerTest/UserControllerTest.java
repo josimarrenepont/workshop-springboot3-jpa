@@ -4,6 +4,7 @@ import com.educandoweb.course.controller.UserController;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import com.educandoweb.course.services.UserService;
+import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -107,5 +107,21 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password").value(userDto.getPassword()));
 
         verify(userService).insert(any(UserDto.class));
+    }
+    @Test
+    void testUpdate() throws Exception{
+        when(userService.update(eq(1L), any(UserDto.class))).thenReturn(userDto);
+        String userJson = "{\"name\": \"user\",  \"email\": \"user@email.com\", " +
+                "\"phone\": \"1234567\", \"password\": \"1234567\"}";
+
+        ResultActions result = mockMvc.perform(put("/users/1")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userDto.getId()))
+                .andExpect(jsonPath("$.name").value(userDto.getName()))
+                .andExpect(jsonPath("$.phone").value(userDto.getPhone()));
     }
 }

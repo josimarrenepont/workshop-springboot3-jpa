@@ -13,7 +13,7 @@ public class UserDto {
     private String password;
 
     public UserDto(){}
-    
+
     public UserDto(User user) {
         this.id = user.getId();
         this.name = user.getName();

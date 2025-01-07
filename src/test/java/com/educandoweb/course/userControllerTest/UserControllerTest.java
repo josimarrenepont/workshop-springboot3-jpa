@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -83,5 +85,27 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(userDto.getId()))
                 .andExpect(jsonPath("$.name").value(userDto.getName()))
                 .andExpect(jsonPath("$.email").value(userDto.getEmail()));
+    }
+    @Test
+    void testInsert() throws Exception{
+
+        when(userService.insert(any(UserDto.class))).thenReturn(user);
+
+        String userJson = "{\"name\": \"user\",  \"email\": \"user@email.com\", " +
+                "\"phone\": \"1234567\", \"password\": \"1234567\"}";
+
+        ResultActions result = mockMvc.perform(post("/users")
+                        .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userDto.getId()))
+                .andExpect(jsonPath("$.name").value(userDto.getName()))
+                .andExpect(jsonPath("$.email").value(userDto.getEmail()))
+                .andExpect(jsonPath("$.phone").value(userDto.getPhone()))
+                .andExpect(jsonPath("$.password").value(userDto.getPassword()));
+
+        verify(userService).insert(any(UserDto.class));
     }
 }

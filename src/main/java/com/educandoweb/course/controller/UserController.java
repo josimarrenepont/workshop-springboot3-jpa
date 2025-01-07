@@ -2,6 +2,8 @@ package com.educandoweb.course.controller;
 
 import java.net.URI;
 import java.util.List;
+
+import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.educandoweb.course.services.UserService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -36,8 +39,9 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<UserDto> insert(@RequestBody @Validated UserDto userDto){
-		UserDto createdUser = userService.insert(userDto);
-		return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
+		User user = userService.insert(userDto);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
+		return ResponseEntity.created(uri).body(new UserDto(user));
 	}
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id){

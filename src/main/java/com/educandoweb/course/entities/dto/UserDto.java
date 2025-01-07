@@ -12,8 +12,8 @@ public class UserDto {
     private String phone;
     private String password;
 
-    private Set<User> userList;
-
+    public UserDto(){}
+    
     public UserDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
@@ -60,13 +60,5 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Set<User> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(Set<User> userList) {
-        this.userList = userList;
     }
 }

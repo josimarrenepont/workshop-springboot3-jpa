@@ -69,7 +69,7 @@ public class UserServiceImplTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         UserDto userDto = new UserDto(user);
-        UserDto result = userService.insert(userDto);
+        User result = userService.insert(userDto);
 
         assertNotNull(result);
         assertEquals(userDto.getName(), result.getName());

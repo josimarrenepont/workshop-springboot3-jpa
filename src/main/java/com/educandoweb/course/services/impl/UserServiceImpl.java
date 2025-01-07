@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,14 +40,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
     }
     @Override
-    public UserDto insert(UserDto userDto){
+    public User insert(UserDto userDto){
         User user = new User();
         user.setName(userDto.getName());
         user.setPhone(userDto.getPhone());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
 
-        return new UserDto(userRepository.save(user));
+        return userRepository.save(user);
     }
     @Transactional
     @Override

@@ -27,7 +27,8 @@ Este projeto é um sistema completo para gerenciar pedidos, controlar estoque e 
 * Banco de dados: PostgreSQL
 
 # Esteira CI/CD
-### Este projeto utiliza GitHub Actions para implementar a esteira CI/CD, garantindo um processo automatizado de integração e entrega contínua. O pipeline realiza as seguintes etapas:
+## Este projeto utiliza GitHub Actions para implementar a esteira CI/CD, garantindo um processo automatizado de integração e entrega contínua. 
+### O pipeline realiza as seguintes etapas:
 
   1. Build: Compila o projeto usando Maven.
   2. Testes: Executa os testes automatizados.

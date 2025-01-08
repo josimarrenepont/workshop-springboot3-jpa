@@ -124,4 +124,15 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name").value(userDto.getName()))
                 .andExpect(jsonPath("$.phone").value(userDto.getPhone()));
     }
+    @Test
+    void testDelete() throws Exception{
+        Long id = 1L;
+        doNothing().when(userService).delete(id);
+
+        ResultActions result = mockMvc.perform(delete("/users/1", id)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNoContent());
+        verify(userService, times(1)).delete(id);
+    }
 }

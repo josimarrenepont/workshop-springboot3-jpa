@@ -5,6 +5,7 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.CategoryRepository;
 import com.educandoweb.course.services.CategoryService;
+import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,8 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,6 +57,15 @@ public class CategoryServiceTest {
         assertNotNull(result);
         assertEquals(category.getId(), result.getId());
 
+        verify(categoryRepository, times(1)).findById(1L);
+    }
+    @Test
+    void testFindById_ResourceNotFound(){
+        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            categoryService.findById(1L);
+        });
         verify(categoryRepository, times(1)).findById(1L);
     }
 }

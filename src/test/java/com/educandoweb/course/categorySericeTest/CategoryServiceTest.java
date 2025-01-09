@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,5 +47,16 @@ public class CategoryServiceTest {
         assertEquals(1, categories.size());
         assertEquals(category.getId(), categories.get(0).getId());
         verify(categoryRepository, times(1)).searchAll();
+    }
+    @Test
+    void testFindById(){
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+
+        Category result = categoryService.findById(1L);
+
+        assertNotNull(result);
+        assertEquals(category.getId(), result.getId());
+
+        verify(categoryRepository, times(1)).findById(1L);
     }
 }

@@ -68,4 +68,16 @@ public class CategoryServiceTest {
         });
         verify(categoryRepository, times(1)).findById(1L);
     }
+    @Test
+    void testCreateCategory(){
+        when(categoryRepository.save(category)).thenReturn(category);
+
+        Category result = categoryService.createCategory(category);
+
+        assertNotNull(result);
+        assertEquals(category.getId(), result.getId());
+        assertEquals(category.getName(), result.getName());
+
+        verify(categoryRepository, times(1)).save(any(Category.class));
+    }
 }

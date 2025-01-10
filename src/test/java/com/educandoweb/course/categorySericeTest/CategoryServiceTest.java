@@ -80,4 +80,18 @@ public class CategoryServiceTest {
 
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
+    @Test
+    void testCategoryUpdate(){
+        when(categoryRepository.getReferenceById(1L)).thenReturn(category);
+        when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+        Category result = categoryService.update(1L, category);
+
+        assertNotNull(result);
+        assertEquals(category.getId(), result.getId());
+        assertEquals(category.getName(), result.getName());
+
+        verify(categoryRepository, times(1)).getReferenceById(1L);
+        verify(categoryRepository, times(1)).save(any(Category.class));
+    }
 }

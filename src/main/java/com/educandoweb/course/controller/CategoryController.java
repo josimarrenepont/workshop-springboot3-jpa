@@ -37,9 +37,7 @@ public class CategoryController {
 	@PostMapping
 	public ResponseEntity<Category> createCategory(@Validated @RequestBody Category obj){
 		Category category = categoryService.createCategory(obj);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(category.getId()).toUri();
-
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(category.getId()).toUri();
 		return ResponseEntity.created(uri).body(category);
 	}
 	@PutMapping(value = "/{id}")

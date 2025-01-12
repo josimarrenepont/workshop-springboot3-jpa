@@ -1,8 +1,6 @@
 package com.educandoweb.course.categorySericeTest;
 
 import com.educandoweb.course.entities.Category;
-import com.educandoweb.course.entities.Product;
-import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.CategoryRepository;
 import com.educandoweb.course.services.CategoryService;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;

@@ -43,7 +43,6 @@ public class OrderServiceTest {
     private OrderService orderService;
 
     private Order order;
-    private User user;
     private Product product;
     private OrderItem orderItem;
 
@@ -51,7 +50,7 @@ public class OrderServiceTest {
     void SetUp(){
         MockitoAnnotations.openMocks(this);
 
-        user = new User(1L, "user", "user@email.com", "1234567", "1234567");
+        User user = new User(1L, "user", "user@email.com", "1234567", "1234567");
         order = new Order(1L, Instant.parse("2019-06-20T15:20:01Z"), OrderStatus.PAID, user);
         product = new Product(1L, "Cell Phone", "Iphone 15 pro",
                 1500.0, "imgUrl", 7);

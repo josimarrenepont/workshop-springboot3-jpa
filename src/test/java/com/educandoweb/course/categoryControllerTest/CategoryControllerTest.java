@@ -21,12 +21,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -68,5 +68,17 @@ public class CategoryControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(category.getId()))
                 .andExpect(jsonPath("$[0].name").value(category.getName()));
+    }
+    @Test
+    void testFindById() throws Exception{
+        when(categoryService.findById(1L)).thenReturn(category);
+
+        ResultActions result = mockMvc.perform(get("/categories/1")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(category.getId()))
+                .andExpect(jsonPath("$.name").value(category.getName()));
     }
 }

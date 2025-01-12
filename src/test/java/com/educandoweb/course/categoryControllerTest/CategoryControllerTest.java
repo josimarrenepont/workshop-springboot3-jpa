@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -86,13 +87,29 @@ public class CategoryControllerTest {
     void testCreateCategory() throws Exception{
         when(categoryService.createCategory(any(Category.class))).thenReturn(category);
 
-        String orderJson = "{\"id\": 1, \"name\": \"New Category\"}";
+        String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
 
         ResultActions result = mockMvc.perform(post("/categories")
-                .content(orderJson)
+                .content(categoryJson)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(category.getId()))
+                .andExpect(jsonPath("$.name").value(category.getName()));
+    }
+    @Test
+    void testUpdate() throws Exception{
+        Category category = new Category(1L, "New Category");
+        when(categoryService.update(eq(1L) , any(Category.class))).thenReturn(category);
+
+        String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
+
+        ResultActions result = mockMvc.perform(put("/categories/1")
+                .content(categoryJson)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()));

@@ -18,25 +18,25 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class CategoryController {
 
 	@Autowired
-	private CategoryService service;
+	private CategoryService categoryService;
 	
 	@Autowired
-	private CategoryRepository repository;
+	private CategoryRepository categoryRepository;
 
 	@GetMapping
 	public ResponseEntity<List<Category>> findAll() {
-		List<Category> list = repository.searchAll();
+		List<Category> list = categoryService.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Category> findById(@PathVariable Long id) {
-		Category obj = service.findById(id);
+		Category obj = categoryService.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	@PostMapping
 	public ResponseEntity<Category> createCategory(@Validated @RequestBody Category obj){
-		Category category = service.createCategory(obj);
+		Category category = categoryService.createCategory(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(category.getId()).toUri();
 
@@ -44,7 +44,7 @@ public class CategoryController {
 	}
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Category> update(@Validated @PathVariable Long id, @RequestBody Category obj){
-		Category updatedCategory = service.update(id, obj);
+		Category updatedCategory = categoryService.update(id, obj);
 		return ResponseEntity.ok().body(updatedCategory);
 	}
 }

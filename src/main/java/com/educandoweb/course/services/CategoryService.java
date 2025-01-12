@@ -15,26 +15,26 @@ import com.educandoweb.course.repositories.CategoryRepository;
 public class CategoryService {
 
 	@Autowired
-	private CategoryRepository repository;
+	private CategoryRepository categoryRepository;
 	
 	public List<Category> findAll(){
-		return repository.searchAll();
+		return categoryRepository.searchAll();
 	}
 	
 	public Category findById(Long id) {
-		Optional<Category> obj = repository.findById(id);
+		Optional<Category> obj = categoryRepository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
 	public Category createCategory(Category obj) {
-		return repository.save(obj);
+		return categoryRepository.save(obj);
 	}
 
 	public Category update(Long id, Category obj) {
 		try{
-			Category entity = repository.getReferenceById(id);
+			Category entity = categoryRepository.getReferenceById(id);
 			updateData(entity, obj);
-			return repository.save(entity);
+			return categoryRepository.save(entity);
 		} catch(EntityNotFoundException e){
 			throw new ResourceNotFoundException(id);
 		}

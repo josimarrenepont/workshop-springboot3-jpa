@@ -47,7 +47,7 @@ public class UserServiceImplTest {
         assertEquals(1, result.size());
         UserDto dto = result.get(0);
         assertEquals(user.getId(), dto.getId());
-        assertEquals(user.getName(), dto.getName());
+        assertEquals(user.getUserName(), dto.getName());
         assertEquals(user.getEmail(), dto.getEmail());
         verify(userRepository, times(1)).findAll();
     }
@@ -72,7 +72,7 @@ public class UserServiceImplTest {
         User result = userService.insert(userDto);
 
         assertNotNull(result);
-        assertEquals(userDto.getName(), result.getName());
+        assertEquals(userDto.getName(), result.getUserName());
     }
     @Test
     void testUpdate(){

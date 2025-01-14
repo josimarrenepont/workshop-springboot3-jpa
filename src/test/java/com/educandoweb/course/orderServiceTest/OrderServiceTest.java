@@ -100,7 +100,7 @@ public class OrderServiceTest {
         Order result = orderService.create(order);
 
         assertNotNull(result);
-        assertEquals(order.getClient(), result.getClient());
+        assertEquals(order.getUser(), result.getUser());
         assertEquals(order.getItems(), result.getItems());
         assertEquals(order.getPayment(), result.getPayment());
         assertEquals(order.getMoment(), result.getMoment());
@@ -120,7 +120,7 @@ public class OrderServiceTest {
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
         assertEquals(order.getItems(), result.getItems());
         assertEquals(order.getMoment(), result.getMoment());
-        assertEquals(order.getClient(), result.getClient());
+        assertEquals(order.getUser(), result.getUser());
         assertEquals(order.getPayment(), result.getPayment());
 
         verify(orderRepository, times(1)).findById(1L);

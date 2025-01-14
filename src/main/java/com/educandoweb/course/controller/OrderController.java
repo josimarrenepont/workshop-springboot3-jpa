@@ -16,24 +16,24 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderService service;
+    private OrderService orderService;
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> findAll() {
-        List<Order> orders = service.findAll();
+        List<Order> orders = orderService.findAll();
         List<OrderDto> dtos = orders.stream().map(OrderDto::new).toList();
         return ResponseEntity.ok().body(dtos);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<OrderDto> findById(@PathVariable Long id) {
-        Order order = service.findById(id);
+        Order order = orderService.findById(id);
         return ResponseEntity.ok(new OrderDto(order));
     }
 
     @PostMapping
     public ResponseEntity<OrderDto> create(@RequestBody Order order) {
-        Order createdOrder = service.create(order);
+        Order createdOrder = orderService.create(order);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(createdOrder.getId())
@@ -43,20 +43,20 @@ public class OrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<OrderDto> update(@PathVariable Long id, @RequestBody Order order) {
-        Order updatedOrder = service.update(id, order);
+        Order updatedOrder = orderService.update(id, order);
         return ResponseEntity.ok(new OrderDto(updatedOrder));
     }
 
     @PostMapping(value = "/process")
     public ResponseEntity<OrderDto> processOrder(@RequestBody Order order) {
-        Order processedOrder = service.processOrder(order);
+        Order processedOrder = orderService.processOrder(order);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(processedOrder.getId()).toUri();
         return ResponseEntity.created(uri).body(new OrderDto(processedOrder));
     }
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<OrderDto> delete(@PathVariable Long id){
-        service.delete(id);
+        orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

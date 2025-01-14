@@ -1,6 +1,7 @@
 package com.educandoweb.course.userControllerTest;
 
 import com.educandoweb.course.controller.UserController;
+import com.educandoweb.course.entities.Permission;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
 import com.educandoweb.course.services.UserService;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -54,8 +56,10 @@ public class UserControllerTest {
                 .setControllerAdvice()
                 .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
                 .build();
-
-        user = new User(1L, "user", "user@email.com", "1234567", "1234567");
+        Permission permission = new Permission(1L, "ROLE_USER");
+        Set<Permission> permissions = Set.of(permission);
+        user = new User(1L, "user", "user@email.com", "1234567", "password");
+        user.setPermissions(permissions);
         userDto = new UserDto(user);
     }
     @Test

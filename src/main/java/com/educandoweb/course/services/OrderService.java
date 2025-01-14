@@ -57,7 +57,7 @@ public class OrderService {
 
 	public Order update(Long id, Order updatedOrder) {
 		Order existingOrder = findById(id);
-		existingOrder.setClient(updatedOrder.getClient());
+		existingOrder.setUser(updatedOrder.getUser());
 		existingOrder.setMoment(updatedOrder.getMoment());
 		existingOrder.setOrderStatus(updatedOrder.getOrderStatus());
 		existingOrder.setPayment(updatedOrder.getPayment());

@@ -41,8 +41,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User insert(UserDto userDto){
-        User user = new User();
-        user.setName(userDto.getName());
+        User user = new User(1L, "user", "user@email.com", "1234567", "password");
+        user.setUserName(userDto.getName());
         user.setPhone(userDto.getPhone());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());

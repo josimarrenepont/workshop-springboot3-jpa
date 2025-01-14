@@ -15,7 +15,7 @@ public class OrderUtils {
         if (order.getItems() == null || order.getItems().isEmpty()) {
             throw new IllegalArgumentException("The order must contain at least one item.");
         }
-        if (order.getClient() == null) {
+        if (order.getUser() == null) {
             throw new IllegalArgumentException("The order must be associated with a customer.");
         }
     }

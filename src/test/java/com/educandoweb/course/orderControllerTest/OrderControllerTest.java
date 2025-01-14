@@ -96,7 +96,13 @@ public class OrderControllerTest {
 
         when(orderService.create(any(Order.class))).thenReturn(order);
 
-        String orderJson = "{\"moment\": \"2019-06-20T19:53:07Z\", \"orderStatus\": \"PAID\", \"client\": {\"id\": 1}}";
+        String orderJson = """
+                {
+                    "moment": "2019-06-20T19:53:07Z",
+                    "orderStatus": "PAID",
+                    "user": {"id": 1}
+                }
+                """;
 
         ResultActions result = mockMvc.perform(post("/orders")
                         .content(orderJson)
@@ -114,7 +120,13 @@ public class OrderControllerTest {
         OrderDto orderDto = new OrderDto(order);
         when(orderService.update(eq(1L), any(Order.class))).thenReturn(order);
 
-        String orderJson = "{\"moment\": \"2019-06-20T19:53:07Z\", \"orderStatus\": \"PAID\", \"client\": {\"id\": 1}}";
+        String orderJson = """
+                {
+                    "moment": "2019-06-20T19:53:07Z",
+                    "orderStatus": "PAID",
+                    "user": {"id": 1}
+                }
+                """;
 
         ResultActions result = mockMvc.perform(put("/orders/1")
                 .content(orderJson)

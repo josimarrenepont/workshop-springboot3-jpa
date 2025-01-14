@@ -46,14 +46,11 @@ public class User implements UserDetails, Serializable{
 	)
 	private Set<Permission> permissions;
 
-
-
 	@JsonIgnore
 	@OneToMany(mappedBy = "user")
 	private List<Order> orders = new ArrayList<>();
 
-    public User() {
-    }
+    public User() {}
 
     public User(long l, String user, String mail, String number, String password) {
 	}

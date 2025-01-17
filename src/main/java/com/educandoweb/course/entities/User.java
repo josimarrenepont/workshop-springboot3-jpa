@@ -18,7 +18,7 @@ public class User implements UserDetails, Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(name = "user_name", unique = true)
-	private String userName;
+	private String username;
 
 	@Column(name = "password")
 	private String password;
@@ -55,11 +55,11 @@ public class User implements UserDetails, Serializable{
     public User(long l, String user, String mail, String number, String password) {
 	}
 
-	public User(Long id, String userName, String password, Boolean accountNonExpired,
+	public User(Long id, String username, String password, Boolean accountNonExpired,
 				Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled,
 				String email, String phone, Set<Permission> permissions) {
 		this.id = id;
-		this.userName = userName;
+		this.username = username;
 		this.password = password;
 		this.accountNonExpired = accountNonExpired;
 		this.accountNonLocked = accountNonLocked;
@@ -94,7 +94,7 @@ public class User implements UserDetails, Serializable{
 
 	@Override
 	public String getUsername() {
-		return this.userName;
+		return this.username;
 	}
 
 	@Override
@@ -126,11 +126,11 @@ public class User implements UserDetails, Serializable{
 	}
 
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUserName(String username) {
+		this.username = username;
 	}
 
 	public void setPassword(String password) {

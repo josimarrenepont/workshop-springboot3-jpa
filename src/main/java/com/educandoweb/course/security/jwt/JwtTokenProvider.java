@@ -73,6 +73,14 @@ public class JwtTokenProvider {
                 .withIssuer(issueUrl)
                 .sign(algorithm);
     }
+
+    public Authentication getAuthentication(String token) {
+        DecodedJWT decodedJWT = decodedJWT(token);
+        UserDetails userDetails = this.userDetailsService.
+                loadUserByUsername(decodedJWT.getSubject());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
     public Authentication getAuthencation(String token){
         DecodedJWT decodedJWT = decodedJWT(token);
         UserDetails userDetails = this.userDetailsService

@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
+
     @Value("${security.allowed.urls}")
     private String[] allowedUrls;
 
@@ -36,7 +37,7 @@ public class SecurityConfig {
                         Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA256);
 
         encoders.put("pbkdf2", pbkdf2Encoder);
-        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkfd2", encoders);
+        DelegatingPasswordEncoder passwordEncoder = new DelegatingPasswordEncoder("pbkdf2", encoders);
         passwordEncoder.setDefaultPasswordEncoderForMatches(pbkdf2Encoder);
 
         return passwordEncoder;

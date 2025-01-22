@@ -7,35 +7,37 @@ Este projeto é um sistema completo para gerenciar pedidos, controlar estoque e 
  - Cadastro e gerenciamento de produtos, categorias e clientes.
  - Controle de estoque com redução automática em cada venda.
  - Geração de relatórios de vendas.
+ - Autenticação e autorização com Spring Security utilizando JWT (JSON Web Token).
  - Integração com API RESTful.
  - Automação de builds e deploy com GitHub Actions.
  - Containerização com Docker e orquestração com Docker Compose.
  - Cálculo de subtotais de pedidos, levando em consideração a quantidade e o preço dos produtos.
  - Relacionamento entre pedidos e produtos foi aprimorado, agora utilizando a entidade OrderItem para representar os itens de cada pedido.
   
-# Tecnologias utilizadas
+## Tecnologias utilizadas
 
-## Back End
+### Back End
 
 * Java
 * Spring Boot
+* Spring Security com JWT para autenticação e autorização
 * JPA / Hibernate
 * Maven
 
-# Implantação em produção
+### Implantação em produção
 
 * Banco de dados: PostgreSQL
 
-# Esteira CI/CD
-## Este projeto utiliza GitHub Actions para implementar a esteira CI/CD, garantindo um processo automatizado de integração e entrega contínua. 
-### O pipeline realiza as seguintes etapas:
+### Esteira CI/CD
+#### Este projeto utiliza GitHub Actions para implementar a esteira CI/CD, garantindo um processo automatizado de integração e entrega contínua. 
+#### O pipeline realiza as seguintes etapas:
 
   1. Build: Compila o projeto usando Maven.
   2. Testes: Executa os testes automatizados.
   3. Containerização: Constrói a imagem Docker do projeto.
   4. Deploy: Publica a imagem no Docker Hub.
 
-# Autor
+### Autor
 
 Josimar Renepont dos Santos
 

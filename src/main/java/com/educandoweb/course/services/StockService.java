@@ -3,13 +3,11 @@ package com.educandoweb.course.services;
 import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.repositories.ProductRepository;
-import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.InsufficientStockException;
 import com.educandoweb.course.services.exceptions.StockUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.naming.InsufficientResourcesException;
 import java.util.Set;
 
 @Service

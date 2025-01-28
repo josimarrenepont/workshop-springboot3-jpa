@@ -17,14 +17,14 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_payment")
 public class Payment implements Serializable {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Instant moment;
 	private String status;
 	private String transactionId;
-	
+
 	@JsonIgnore
 	@OneToOne
 	@MapsId
@@ -32,7 +32,7 @@ public class Payment implements Serializable {
 
 	public Payment() {
 	}
-	
+
 	public Payment(Long id, Instant moment, Order order, String status, String transactionId) {
 		super();
 		this.id = id;

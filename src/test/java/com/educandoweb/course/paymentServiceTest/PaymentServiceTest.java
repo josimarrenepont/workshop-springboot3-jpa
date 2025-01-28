@@ -57,8 +57,8 @@ public class PaymentServiceTest {
     }
     @Test
     void testProcessPayment(){
+        doNothing().when(stockService).validateStock(order.getItems());
 
-        stockService.validateStock(order.getItems());
         when(orderRepository.save(order)).thenReturn(order);
 
         Payment processedPayment = paymentService.processPayment(order);

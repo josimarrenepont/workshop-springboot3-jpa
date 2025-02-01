@@ -8,7 +8,7 @@ public enum OrderStatus {
 	DELIVERED(4),
 	CANCELED(5);
 	
-	private int code;
+	private final int code;
 	
 	private OrderStatus (int code) {
 		this.code = code;

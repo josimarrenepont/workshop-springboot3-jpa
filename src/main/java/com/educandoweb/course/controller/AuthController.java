@@ -32,7 +32,7 @@ public class AuthController {
     }
 
     private boolean checkIfParamIsNotNull(AccountCredentialsVO data) {
-        return data == null || isBlank(data.getUsername()) || isBlank(data.getPasswor());
+        return data == null || isBlank(data.getUsername()) || isBlank(data.getPassword());
     }
     @PutMapping(value = "/refresh/{username}")
     public ResponseEntity refreshToken(@PathVariable("username") String username,

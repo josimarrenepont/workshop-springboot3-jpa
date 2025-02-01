@@ -26,7 +26,7 @@ public class AuthService {
 
     public ResponseEntity signing(AccountCredentialsVO data){
         var username = data.getUsername();
-        var password = data.getPasswor();
+        var password = data.getPassword();
 
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

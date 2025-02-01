@@ -6,13 +6,13 @@ import java.util.Objects;
 public class AccountCredentialsVO implements Serializable {
 
     private String username;
-    private String passwor;
+    private String password;
 
     public AccountCredentialsVO(){}
 
-    public AccountCredentialsVO(String username, String passwor) {
+    public AccountCredentialsVO(String username, String password) {
         this.username = username;
-        this.passwor = passwor;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -23,23 +23,23 @@ public class AccountCredentialsVO implements Serializable {
         this.username = username;
     }
 
-    public String getPasswor() {
-        return passwor;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswor(String passwor) {
-        this.passwor = passwor;
+    public void setPasswor(String password) {
+        this.password = password;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof AccountCredentialsVO that)) return false;
-        return Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPasswor(), that.getPasswor());
+        return Objects.equals(getUsername(), that.getUsername()) && Objects.equals(getPassword(), that.getPassword());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUsername(), getPasswor());
+        return Objects.hash(getUsername(), getPassword());
     }
 }

@@ -5,7 +5,7 @@ import com.educandoweb.course.entities.OrderItem;
 
 public class OrderUtils {
 
-    public static Double calculateTotal(Order order) {
+    public static double calculateTotal(Order order) {
         return order.getItems().stream()
                 .mapToDouble(OrderItem::getSubTotal)
                 .sum();

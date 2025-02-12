@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +42,6 @@ public class StockServiceTest {
 
     @BeforeEach
     void setUp(){
-        MockitoAnnotations.openMocks(this);
 
         User user = new User(1L, "user", "user@email.com", "1234567", "1234567");
         order = new Order(1L, Instant.parse("2019-06-20T15:20:01Z"), OrderStatus.PAID, user);
@@ -54,14 +54,17 @@ public class StockServiceTest {
     }
     @Test
     void stockServiceValidateTest(){
+        product.setQuantityInStock(10);
 
-        stockService.validateStock(order.getItems());
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         assertDoesNotThrow(() -> stockService.validateStock(order.getItems()));
     }
     @Test
     void stockServiceValidateTest_throwsException_whenInsufficientStock(){
         product.setQuantityInStock(3);
+
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         InsufficientStockException insufficientStock = assertThrows(InsufficientStockException.class, () ->
                 stockService.validateStock(order.getItems()));
@@ -71,8 +74,9 @@ public class StockServiceTest {
     }
     @Test
     void stockServiceUpdateStockTest(){
-        when(productRepository.save(any(Product.class))).thenReturn(orderItem.getProduct());
-
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+        product.setQuantityInStock(7);
         stockService.updateStock(order.getItems());
 
         verify(productRepository, times(1)).save(any(Product.class));

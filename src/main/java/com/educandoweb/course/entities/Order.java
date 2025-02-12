@@ -33,6 +33,8 @@ public class Order implements Serializable {
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
 
+	private Double total;
+
 	public Order() {}
 
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User user) {
@@ -64,6 +66,14 @@ public class Order implements Serializable {
 
 	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
+	}
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
 	}
 
 	public User getUser() {

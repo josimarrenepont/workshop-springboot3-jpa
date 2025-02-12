@@ -8,7 +8,6 @@ import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.util.OrderUtils;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -17,12 +16,16 @@ import java.util.List;
 
 @Service
 public class OrderService {
-	@Autowired
-	private OrderRepository repository;
 
-	@Autowired
-	private StockService stockService;
+	private final OrderRepository repository;
+	private final StockService stockService;
+	private final PaymentService paymentService;
 
+	public OrderService(OrderRepository repository, StockService stockService, PaymentService paymentService){
+		this.repository = repository;
+		this.stockService = stockService;
+		this.paymentService = paymentService;
+	}
 	public List<Order> findAll() {
 		return repository.findAll();
 	}
@@ -32,29 +35,26 @@ public class OrderService {
 				.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
+	@Transactional
 	public Order create(Order order) {
-		// Validações
+
 		OrderUtils.validateOrder(order);
 
-		// Processar estoque
 		stockService.validateStock(order.getItems());
 
-		// Processar pagamento
-		paymentService.processPayment(order);
+		double total = OrderUtils.calculateTotal(order);
+		order.setTotal(total);
 
-		// Calcular total do pedido
-		Double total = OrderUtils.calculateTotal(order);
-		System.out.println("Total do pedido: " + total);
-
-		order = repository.save(order);
+		Order savedOrder = repository.save(order);
 
 		paymentService.processPayment(order);
 
 		stockService.updateStock(order.getItems());
 
-		return order;
+		return savedOrder;
 	}
 
+	@Transactional
 	public Order update(Long id, Order updatedOrder) {
 		Order existingOrder = findById(id);
 		existingOrder.setUser(updatedOrder.getUser());
@@ -64,34 +64,30 @@ public class OrderService {
 		return repository.save(existingOrder);
 	}
 
-	@Autowired
-	private PaymentService paymentService;
-
 	@Transactional
-	public Order processOrder(Order order) {
+	public Order processOrder(Order order){
 
 		stockService.validateStock(order.getItems());
-		for (OrderItem item : order.getItems()) {
-			Product product = item.getProduct();
-			if (product.getQuantityInStock() < item.getQuantity()) {
-				throw new IllegalArgumentException("Insufficient stock for product: " + product.getName());
+			for(OrderItem item : order.getItems()){
+				Product product = item.getProduct();
+				if(product.getQuantityInStock() < item.getQuantity()){
+					throw new IllegalArgumentException("Insufficient stock for product: " + product.getName());
+				}
+				product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
 			}
-			product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
-		}
-		stockService.updateStock(order.getItems());
+			stockService.updateStock(order.getItems());
+			paymentService.processPayment(order);
 
-		paymentService.processPayment(order);
-
-		return repository.save(order);
+			return repository.save(order);
 	}
 
     public void delete(Long id) {
 		try{
 			repository.deleteById(id);
 		} catch(EmptyResultDataAccessException e){
-			throw new ResourceNotFoundException(id);
+			throw new ResourceNotFoundException("Order not found for id: " + id);
 		} catch (DataIntegrityViolationException e){
-			throw new DatabaseException(e.getMessage());
+			throw new DatabaseException("Integrity violation - " + e.getMessage());
 		}
     }
 }

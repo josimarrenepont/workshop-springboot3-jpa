@@ -9,6 +9,7 @@ import com.educandoweb.course.services.PaymentService;
 import com.educandoweb.course.services.StockService;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
+import com.educandoweb.course.util.OrderUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +49,6 @@ public class OrderServiceTest {
 
     @BeforeEach
     void SetUp(){
-        MockitoAnnotations.openMocks(this);
 
         User user = new User(1L, "user", "user@email.com", "1234567", "1234567");
         order = new Order(1L, Instant.parse("2019-06-20T15:20:01Z"), OrderStatus.PAID, user);
@@ -96,6 +96,11 @@ public class OrderServiceTest {
     @Test
     void testCreate(){
         when(orderRepository.save(any(Order.class))).thenReturn(order);
+        when(paymentService.processPayment(any(Order.class))).thenAnswer(invocation -> {
+            Order ord = invocation.getArgument(0);
+            ord.getPayment().setStatus("APPROVED");
+            return ord.getPayment();
+        });
 
         Order result = orderService.create(order);
 
@@ -105,6 +110,9 @@ public class OrderServiceTest {
         assertEquals(order.getPayment(), result.getPayment());
         assertEquals(order.getMoment(), result.getMoment());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
+
+        double expectedTotal = OrderUtils.calculateTotal(order);
+        assertEquals(expectedTotal, result.getTotal());
 
         verify(orderRepository, times(1)).save(any(Order.class));
     }
@@ -156,12 +164,16 @@ public class OrderServiceTest {
     @Test
     void testProcessOrder(){
         when(orderRepository.save(order)).thenReturn(order);
-
+        when(paymentService.processPayment(order)).thenAnswer(invocation -> {
+            Payment pay = order.getPayment();
+            pay.setStatus("APPROVED");
+            return pay;
+        });
         Order result = orderService.processOrder(order);
 
         assertNotNull(result);
         assertEquals(order.getItems(), result.getItems());
-        assertEquals(order.getPayment().getStatus(), "PENDING");
+        assertEquals(order.getPayment().getStatus(), "APPROVED");
 
         verify(stockService, times(1)).validateStock(order.getItems());
         verify(stockService, times(1)).updateStock(order.getItems());

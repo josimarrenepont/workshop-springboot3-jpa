@@ -3,7 +3,10 @@ package com.educandoweb.course.services;
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
+import com.educandoweb.course.entities.dto.OrderItemDTO;
+import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderRepository;
+import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.util.OrderUtils;
@@ -12,6 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -20,11 +24,14 @@ public class OrderService {
 	private final OrderRepository repository;
 	private final StockService stockService;
 	private final PaymentService paymentService;
+	private final ProductRepository productRepository;
 
-	public OrderService(OrderRepository repository, StockService stockService, PaymentService paymentService){
+	public OrderService(OrderRepository repository, StockService stockService, PaymentService paymentService,
+						ProductRepository productRepository){
 		this.repository = repository;
 		this.stockService = stockService;
 		this.paymentService = paymentService;
+		this.productRepository = productRepository;
 	}
 	public List<Order> findAll() {
 		return repository.findAll();
@@ -38,20 +45,32 @@ public class OrderService {
 	@Transactional
 	public Order create(Order order) {
 
-		OrderUtils.validateOrder(order);
+		Order orders = new Order();
+		orders.setMoment(Instant.now());
+		orders.setOrderStatus(OrderStatus.PENDING);
 
 		stockService.validateStock(order.getItems());
+		OrderUtils.validateOrder(order);
 
-		double total = OrderUtils.calculateTotal(order);
+		Double total = OrderUtils.calculateTotal(order);
 		order.setTotal(total);
 
 		Order savedOrder = repository.save(order);
 
-		paymentService.processPayment(order);
-
 		stockService.updateStock(order.getItems());
 
 		return savedOrder;
+	}
+	@Transactional
+	public Order processpayment(Long orderId){
+		Order order = findById(orderId);
+		if(order.getOrderStatus() != OrderStatus.PENDING){
+			throw new IllegalArgumentException("Payment has already been processed or order cancelled.");
+		}
+		paymentService.processPayment(order);
+		order.setOrderStatus(OrderStatus.PAID);
+		stockService.updateStock(order.getItems());
+		return repository.save(order);
 	}
 
 	@Transactional
@@ -62,23 +81,6 @@ public class OrderService {
 		existingOrder.setOrderStatus(updatedOrder.getOrderStatus());
 		existingOrder.setPayment(updatedOrder.getPayment());
 		return repository.save(existingOrder);
-	}
-
-	@Transactional
-	public Order processOrder(Order order){
-
-		stockService.validateStock(order.getItems());
-			for(OrderItem item : order.getItems()){
-				Product product = item.getProduct();
-				if(product.getQuantityInStock() < item.getQuantity()){
-					throw new IllegalArgumentException("Insufficient stock for product: " + product.getName());
-				}
-				product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
-			}
-			stockService.updateStock(order.getItems());
-			paymentService.processPayment(order);
-
-			return repository.save(order);
 	}
 
     public void delete(Long id) {

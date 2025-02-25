@@ -46,13 +46,10 @@ public class OrderController {
         Order updatedOrder = orderService.update(id, order);
         return ResponseEntity.ok(new OrderDto(updatedOrder));
     }
-
-    @PostMapping(value = "/process")
-    public ResponseEntity<OrderDto> processOrder(@RequestBody Order order) {
-        Order processedOrder = orderService.processOrder(order);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(processedOrder.getId()).toUri();
-        return ResponseEntity.created(uri).body(new OrderDto(processedOrder));
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<OrderDto> payOrder(@PathVariable Long id){
+        Order paidOrder = orderService.processpayment(id);
+        return ResponseEntity.ok().body(new OrderDto(paidOrder));
     }
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<OrderDto> delete(@PathVariable Long id){

@@ -96,18 +96,12 @@ public class OrderServiceTest {
     @Test
     void testCreate(){
         when(orderRepository.save(any(Order.class))).thenReturn(order);
-        when(paymentService.processPayment(any(Order.class))).thenAnswer(invocation -> {
-            Order ord = invocation.getArgument(0);
-            ord.getPayment().setStatus("APPROVED");
-            return ord.getPayment();
-        });
 
         Order result = orderService.create(order);
 
         assertNotNull(result);
         assertEquals(order.getUser(), result.getUser());
         assertEquals(order.getItems(), result.getItems());
-        assertEquals(order.getPayment(), result.getPayment());
         assertEquals(order.getMoment(), result.getMoment());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
 
@@ -135,6 +129,56 @@ public class OrderServiceTest {
         verify(orderRepository, times(1)).save(any(Order.class));
     }
     @Test
+    void testProcessPaymentSuccessfully() {
+        order.setOrderStatus(OrderStatus.PENDING);
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+        when(paymentService.processPayment(order)).thenReturn(order.getPayment());
+        when(orderRepository.save(order)).thenReturn(order);
+
+        Order processedOrder = orderService.processpayment(order.getId());
+
+        assertNotNull(processedOrder);
+        assertEquals(OrderStatus.PAID, processedOrder.getOrderStatus());
+
+        verify(paymentService, times(1)).processPayment(order);
+        verify(stockService, times(1)).updateStock(order.getItems());
+        verify(orderRepository, times(1)).save(order);
+    }
+    @Test
+    void testProcessPaymentAlreadyPaid() {
+        order.setOrderStatus(OrderStatus.PAID);
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> orderService.processpayment(order.getId()));
+
+        assertEquals("Payment has already been processed or order cancelled.", exception.getMessage());
+    }
+    @Test
+    void testProcessPaymentOrderNotFound() {
+        when(orderRepository.findById(999L)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
+                () -> orderService.processpayment(999L));
+
+        assertEquals("Resource not found. Id 999", exception.getMessage());
+    }
+
+    @Test
+    void testProcessPaymentFails() {
+        order.setOrderStatus(OrderStatus.PENDING);
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+        doThrow(new RuntimeException("Payment failed")).when(paymentService).processPayment(order);
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> orderService.processpayment(order.getId()));
+
+        assertEquals("Payment failed", exception.getMessage());
+        verify(stockService, never()).updateStock(any());
+        verify(orderRepository, never()).save(any());
+    }
+
+    @Test
     void testDelete(){
         doNothing().when(orderRepository).deleteById(1L);
 
@@ -161,37 +205,5 @@ public class OrderServiceTest {
         });
         verify(orderRepository, times(1)).deleteById(1L);
     }
-    @Test
-    void testProcessOrder(){
-        when(orderRepository.save(order)).thenReturn(order);
-        when(paymentService.processPayment(order)).thenAnswer(invocation -> {
-            Payment pay = order.getPayment();
-            pay.setStatus("APPROVED");
-            return pay;
-        });
-        Order result = orderService.processOrder(order);
 
-        assertNotNull(result);
-        assertEquals(order.getItems(), result.getItems());
-        assertEquals(order.getPayment().getStatus(), "APPROVED");
-
-        verify(stockService, times(1)).validateStock(order.getItems());
-        verify(stockService, times(1)).updateStock(order.getItems());
-        verify(paymentService, times(1)).processPayment(order);
-        verify(orderRepository, times(1)).save(order);
-    }
-    @Test
-    void testProcessOrderInsufficientStock(){
-        product.setQuantityInStock(2);
-        orderItem.setProduct(product);
-        orderItem.setQuantity(5);
-        order.getItems().stream().map(OrderItem::getOrder).collect(Collectors.toSet());
-
-        doThrow(new IllegalArgumentException("Insufficient stock for product: " + product.getName()))
-                .when(stockService).validateStock(order.getItems());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> orderService.processOrder(order));
-        assertEquals("Insufficient stock for product: " + product.getName(), exception.getMessage());
-    }
 }

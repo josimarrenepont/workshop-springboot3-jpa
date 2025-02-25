@@ -115,6 +115,21 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderStatus").value(order.getOrderStatus().toString()));
     }
     @Test
+    void testPayOrderEndpoint() throws Exception {
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(OrderStatus.PAID);
+        when(orderService.processpayment(order.getId())).thenReturn(order);
+
+        ResultActions result = mockMvc.perform(put("/orders/{id}/pay", order.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+            result.andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.orderStatus").value("PAID"));
+
+        verify(orderService, times(1)).processpayment(order.getId());
+    }
+    @Test
     void testUpdate() throws Exception{
         Order order = new Order(1L, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.PAID, user);
         OrderDto orderDto = new OrderDto(order);

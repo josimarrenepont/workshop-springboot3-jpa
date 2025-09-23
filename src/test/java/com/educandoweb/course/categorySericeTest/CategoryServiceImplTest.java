@@ -2,7 +2,7 @@ package com.educandoweb.course.categorySericeTest;
 
 import com.educandoweb.course.entities.Category;
 import com.educandoweb.course.repositories.CategoryRepository;
-import com.educandoweb.course.services.CategoryService;
+import com.educandoweb.course.services.impl.CategoryServiceImpl;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CategoryServiceTest {
+public class CategoryServiceImplTest {
 
     @Mock
     private CategoryRepository categoryRepository;
 
     @InjectMocks
-    private CategoryService categoryService;
+    private CategoryServiceImpl categoryServiceImpl;
 
     private Category category;
 
@@ -39,7 +39,7 @@ public class CategoryServiceTest {
     void testFindAll(){
         when(categoryRepository.searchAll()).thenReturn(Collections.singletonList(category));
 
-        List<Category> categories = categoryService.findAll();
+        List<Category> categories = categoryServiceImpl.findAll();
 
         assertNotNull(categories);
         assertEquals(1, categories.size());
@@ -50,7 +50,7 @@ public class CategoryServiceTest {
     void testFindById(){
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 
-        Category result = categoryService.findById(1L);
+        Category result = categoryServiceImpl.findById(1L);
 
         assertNotNull(result);
         assertEquals(category.getId(), result.getId());
@@ -62,7 +62,7 @@ public class CategoryServiceTest {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            categoryService.findById(1L);
+            categoryServiceImpl.findById(1L);
         });
         verify(categoryRepository, times(1)).findById(1L);
     }
@@ -70,7 +70,7 @@ public class CategoryServiceTest {
     void testCreateCategory(){
         when(categoryRepository.save(category)).thenReturn(category);
 
-        Category result = categoryService.createCategory(category);
+        Category result = categoryServiceImpl.createCategory(category);
 
         assertNotNull(result);
         assertEquals(category.getId(), result.getId());
@@ -83,7 +83,7 @@ public class CategoryServiceTest {
         when(categoryRepository.getReferenceById(1L)).thenReturn(category);
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
 
-        Category result = categoryService.update(1L, category);
+        Category result = categoryServiceImpl.update(1L, category);
 
         assertNotNull(result);
         assertEquals(category.getId(), result.getId());

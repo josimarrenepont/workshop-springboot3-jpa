@@ -5,14 +5,13 @@ import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderItemRepository;
 import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.repositories.ProductRepository;
-import com.educandoweb.course.services.StockService;
+import com.educandoweb.course.services.impl.StockServiceImpl;
 import com.educandoweb.course.services.exceptions.InsufficientStockException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class StockServiceTest {
+public class StockServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
@@ -34,7 +33,7 @@ public class StockServiceTest {
     private OrderItemRepository orderItemRepository;
 
     @InjectMocks
-    private StockService stockService;
+    private StockServiceImpl stockServiceImpl;
 
     private Product product;
     private Order order;
@@ -58,7 +57,7 @@ public class StockServiceTest {
 
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
-        assertDoesNotThrow(() -> stockService.validateStock(order.getItems()));
+        assertDoesNotThrow(() -> stockServiceImpl.validateStock(order.getItems()));
     }
     @Test
     void stockServiceValidateTest_throwsException_whenInsufficientStock(){
@@ -67,7 +66,7 @@ public class StockServiceTest {
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         InsufficientStockException insufficientStock = assertThrows(InsufficientStockException.class, () ->
-                stockService.validateStock(order.getItems()));
+                stockServiceImpl.validateStock(order.getItems()));
 
         assertEquals("Insufficient stock for product: " + product.getName(),
                 insufficientStock.getMessage());
@@ -77,7 +76,7 @@ public class StockServiceTest {
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
         when(productRepository.save(any(Product.class))).thenReturn(product);
         product.setQuantityInStock(7);
-        stockService.updateStock(order.getItems());
+        stockServiceImpl.updateStock(order.getItems());
 
         verify(productRepository, times(1)).save(any(Product.class));
 

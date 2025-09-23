@@ -2,7 +2,7 @@ package com.educandoweb.course.categoryControllerTest;
 
 import com.educandoweb.course.controller.CategoryController;
 import com.educandoweb.course.entities.Category;
-import com.educandoweb.course.services.CategoryService;
+import com.educandoweb.course.services.impl.CategoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CategoryControllerTest {
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryServiceImpl categoryServiceImpl;
 
     @InjectMocks
     private CategoryController categoryController;
@@ -61,7 +61,7 @@ public class CategoryControllerTest {
     void testFindAll() throws Exception{
         List<Category> categoryList = Collections.singletonList(category);
 
-        when(categoryService.findAll()).thenReturn(List.of(category));
+        when(categoryServiceImpl.findAll()).thenReturn(List.of(category));
 
         ResultActions result = mockMvc.perform(get("/categories")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -72,7 +72,7 @@ public class CategoryControllerTest {
     }
     @Test
     void testFindById() throws Exception{
-        when(categoryService.findById(1L)).thenReturn(category);
+        when(categoryServiceImpl.findById(1L)).thenReturn(category);
 
         ResultActions result = mockMvc.perform(get("/categories/1")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -84,7 +84,7 @@ public class CategoryControllerTest {
     }
     @Test
     void testCreateCategory() throws Exception{
-        when(categoryService.createCategory(any(Category.class))).thenReturn(category);
+        when(categoryServiceImpl.createCategory(any(Category.class))).thenReturn(category);
 
         String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
 
@@ -100,7 +100,7 @@ public class CategoryControllerTest {
     @Test
     void testUpdate() throws Exception{
         Category category = new Category(1L, "New Category");
-        when(categoryService.update(eq(1L) , any(Category.class))).thenReturn(category);
+        when(categoryServiceImpl.update(eq(1L) , any(Category.class))).thenReturn(category);
 
         String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
 

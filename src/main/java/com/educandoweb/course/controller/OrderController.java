@@ -3,7 +3,6 @@ package com.educandoweb.course.controller;
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.dto.OrderDto;
 import com.educandoweb.course.services.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,8 +14,12 @@ import java.util.List;
 @RequestMapping(value = "/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> findAll() {

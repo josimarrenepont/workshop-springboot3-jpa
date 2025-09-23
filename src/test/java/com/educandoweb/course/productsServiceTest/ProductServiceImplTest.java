@@ -3,7 +3,7 @@ package com.educandoweb.course.productsServiceTest;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.ProductRepository;
-import com.educandoweb.course.services.ProductService;
+import com.educandoweb.course.services.impl.ProductServiceImpl;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+public class ProductServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private ProductService productService;
+    private ProductServiceImpl productServiceImpl;
 
     private Product product;
     private ProductDto productDto;
@@ -44,7 +44,7 @@ public class ProductServiceTest {
 
         when(productRepository.searchAll()).thenReturn(List.of(product));
 
-        List<Product> result = productService.findAll();
+        List<Product> result = productServiceImpl.findAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -58,7 +58,7 @@ public class ProductServiceTest {
     void testFindById(){
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
 
-        Product result = productService.findById(1L);
+        Product result = productServiceImpl.findById(1L);
 
         assertNotNull(result);
         assertEquals(product.getId(), result.getId());;
@@ -71,7 +71,7 @@ public class ProductServiceTest {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            productService.findById(1L);
+            productServiceImpl.findById(1L);
         });
         verify(productRepository, times(1)).findById(1L);
     }
@@ -79,7 +79,7 @@ public class ProductServiceTest {
     void testInsert(){
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        Product result = productService.insert(new ProductDto(product));
+        Product result = productServiceImpl.insert(new ProductDto(product));
 
         assertNotNull(result);
         assertEquals(product.getName(), result.getName());
@@ -93,7 +93,7 @@ public class ProductServiceTest {
         when(productRepository.getReferenceById(1L)).thenReturn(product);
         when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        Product result = productService.update(1L, productDto);
+        Product result = productServiceImpl.update(1L, productDto);
 
         assertNotNull(result);
         assertEquals(productDto.getName(), result.getName());
@@ -105,7 +105,7 @@ public class ProductServiceTest {
     void testDelete(){
         doNothing().when(productRepository).deleteById(1L);
 
-        productService.delete(1L);
+        productServiceImpl.delete(1L);
 
         verify(productRepository, times(1)).deleteById(1L);
     }
@@ -114,7 +114,7 @@ public class ProductServiceTest {
         doThrow(ResourceNotFoundException.class).when(productRepository).deleteById(1L);
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            productService.delete(1L);
+            productServiceImpl.delete(1L);
         });
 
         verify(productRepository, times(1)).deleteById(1L);
@@ -124,7 +124,7 @@ public class ProductServiceTest {
         doThrow(DatabaseException.class).when(productRepository).deleteById(1L);
 
         assertThrows(DatabaseException.class, () -> {
-            productService.delete(1L);
+            productServiceImpl.delete(1L);
         });
 
         verify(productRepository, times(1)).deleteById(1L);

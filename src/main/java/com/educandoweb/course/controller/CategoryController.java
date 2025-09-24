@@ -11,19 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import com.educandoweb.course.entities.Category;
 import com.educandoweb.course.repositories.CategoryRepository;
-import com.educandoweb.course.services.impl.CategoryServiceImpl;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryController {
 
-
-	private final CategoryService categoryService;
-
-    public CategoryController(CategoryService categoryService, CategoryRepository categoryRepository) {
-        this.categoryService = categoryService;
-    }
+	@Autowired
+	private CategoryService categoryService;
 
     @GetMapping
 	public ResponseEntity<List<Category>> findAll() {

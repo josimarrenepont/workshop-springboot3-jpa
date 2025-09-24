@@ -2,114 +2,92 @@ package com.educandoweb.course.categoryControllerTest;
 
 import com.educandoweb.course.controller.CategoryController;
 import com.educandoweb.course.entities.Category;
-import com.educandoweb.course.services.impl.CategoryServiceImpl;
+import com.educandoweb.course.repositories.CategoryRepository;
+import com.educandoweb.course.services.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class CategoryControllerTest {
 
-    @Mock
-    private CategoryServiceImpl categoryServiceImpl;
-
-    @InjectMocks
-    private CategoryController categoryController;
-
+    @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private CategoryService categoryService;
+
+    @MockBean
+    private CategoryRepository categoryRepository;
+
+
+    private ObjectMapper objectMapper = new ObjectMapper();
     private Category category;
 
     @BeforeEach
-    void setUp(){
-        MockitoAnnotations.openMocks(this);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        mockMvc = MockMvcBuilders.standaloneSetup(categoryController)
-                .setControllerAdvice()
-                .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
-                .build();
-
-        category = new Category(1L, "New Category");
+    void setUp() {
+        category = new Category(1L, "Informatics");
     }
+
     @Test
-    void testFindAll() throws Exception{
-        List<Category> categoryList = Collections.singletonList(category);
+    void testFindAll() throws Exception {
+        when(categoryService.findAll()).thenReturn(Collections.singletonList(category));
 
-        when(categoryServiceImpl.findAll()).thenReturn(List.of(category));
-
-        ResultActions result = mockMvc.perform(get("/categories")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        result.andExpect(status().isOk())
+        mockMvc.perform(get("/categories")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(category.getId()))
                 .andExpect(jsonPath("$[0].name").value(category.getName()));
     }
+
     @Test
-    void testFindById() throws Exception{
-        when(categoryServiceImpl.findById(1L)).thenReturn(category);
+    void testFindById() throws Exception {
+        when(categoryService.findById(1L)).thenReturn(category);
 
-        ResultActions result = mockMvc.perform(get("/categories/1")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        result.andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/categories/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()));
     }
+
     @Test
-    void testCreateCategory() throws Exception{
-        when(categoryServiceImpl.createCategory(any(Category.class))).thenReturn(category);
+    void testCreateCategory() throws Exception {
+        when(categoryService.createCategory(any(Category.class))).thenReturn(category);
 
-        String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
-
-        ResultActions result = mockMvc.perform(post("/categories")
-                .content(categoryJson)
-                .contentType(MediaType.APPLICATION_JSON));
-
-        result.andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(post("/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(category))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()));
     }
+
     @Test
-    void testUpdate() throws Exception{
-        Category category = new Category(1L, "New Category");
-        when(categoryServiceImpl.update(eq(1L) , any(Category.class))).thenReturn(category);
+    void testUpdateCategory() throws Exception {
+        when(categoryService.update(eq(1L), any(Category.class))).thenReturn(category);
 
-        String categoryJson = "{\"id\": 1, \"name\": \"New Category\"}";
-
-        ResultActions result = mockMvc.perform(put("/categories/1")
-                .content(categoryJson)
-                .contentType(MediaType.APPLICATION_JSON));
-
-        result.andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(category))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()));
     }

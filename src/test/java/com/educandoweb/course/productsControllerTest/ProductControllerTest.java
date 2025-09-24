@@ -3,7 +3,7 @@ package com.educandoweb.course.productsControllerTest;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.entities.dto.ProductDto;
-import com.educandoweb.course.services.impl.ProductServiceImpl;
+import com.educandoweb.course.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ public class ProductControllerTest {
     private ProductController productController;
 
     @Mock
-    private ProductServiceImpl productServiceImpl;
+    private ProductService productService;
 
     private MockMvc mockMvc;
 
@@ -49,7 +49,7 @@ public class ProductControllerTest {
     @Test
     public void testFindAll() throws Exception {
         List<Product> productList = Collections.singletonList(product);
-        when(productServiceImpl.findAll()).thenReturn(productList);
+        when(productService.findAll()).thenReturn(productList);
 
         ResultActions result = mockMvc.perform(get("/products")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -61,7 +61,7 @@ public class ProductControllerTest {
     }
     @Test
     public void testFindById() throws Exception{
-        when(productServiceImpl.findById(1L)).thenReturn(product);
+        when(productService.findById(1L)).thenReturn(product);
 
         ResultActions result = mockMvc.perform(get("/products/1")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -73,7 +73,7 @@ public class ProductControllerTest {
     }
     @Test
     public void testInsert() throws Exception{
-        when(productServiceImpl.insert(any(ProductDto.class))).thenReturn(product);
+        when(productService.insert(any(ProductDto.class))).thenReturn(product);
 
         String productJson = "{\"id\": 1, \"name\": \"Cell Phone\", \"description\": " +
                 "\"Iphone 15 pro\", \"price\": 1500.00, \"imgUrl\": \"image\", \"quantityInStock\": 7}";
@@ -93,7 +93,7 @@ public class ProductControllerTest {
         Product product = new Product(1L, "Cell Phone", "Iphone 15 pro", 1500.0, "imgUrl", 7);
         ProductDto productDto = new ProductDto(product);
 
-        when(productServiceImpl.update(eq(1L), any(ProductDto.class))).thenReturn(product);
+        when(productService.update(eq(1L), any(ProductDto.class))).thenReturn(product);
 
         String productJson = "{\"id\": 1, \"name\": \"Cell Phone\", \"description\": " +
                 "\"Iphone 15 pro\", \"price\": 1500.00, \"imgUrl\": \"image\", \"quantityInStock\": 7}";
@@ -113,12 +113,12 @@ public class ProductControllerTest {
     @Test
     public void testDelete() throws Exception{
         Long productId = 1L;
-        doNothing().when(productServiceImpl).delete(productId);
+        doNothing().when(productService).delete(productId);
 
         ResultActions result = mockMvc.perform(delete("/products/1", productId)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isNoContent());
-        verify(productServiceImpl, times(1)).delete(productId);
+        verify(productService, times(1)).delete(productId);
     }
 }

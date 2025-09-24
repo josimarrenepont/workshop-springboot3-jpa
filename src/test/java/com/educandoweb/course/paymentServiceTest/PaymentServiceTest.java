@@ -5,8 +5,8 @@ import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderItemRepository;
 import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.repositories.ProductRepository;
-import com.educandoweb.course.services.impl.PaymentServiceImpl;
-import com.educandoweb.course.services.impl.StockServiceImpl;
+import com.educandoweb.course.services.PaymentService;
+import com.educandoweb.course.services.StockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentServiceImplTest {
+public class PaymentServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
@@ -31,10 +31,10 @@ public class PaymentServiceImplTest {
     @Mock
     private OrderItemRepository orderItemRepository;
     @Mock
-    private StockServiceImpl stockServiceImpl;
+    private StockService stockService;
 
     @InjectMocks
-    private PaymentServiceImpl paymentServiceImpl;
+    private PaymentService paymentService;
 
     private Order order;
     private Payment payment;
@@ -57,11 +57,11 @@ public class PaymentServiceImplTest {
     }
     @Test
     void testProcessPayment(){
-        doNothing().when(stockServiceImpl).validateStock(order.getItems());
+        doNothing().when(stockService).validateStock(order.getItems());
 
         when(orderRepository.save(order)).thenReturn(order);
 
-        Payment processedPayment = paymentServiceImpl.processPayment(order);
+        Payment processedPayment = paymentService.processPayment(order);
 
         assertNotNull(processedPayment);
         assertEquals(processedPayment.getStatus(), "APPROVED");

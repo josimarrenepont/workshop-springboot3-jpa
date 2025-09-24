@@ -18,5 +18,8 @@ public class OrderUtils {
         if (order.getUser() == null) {
             throw new IllegalArgumentException("The order must be associated with a customer.");
         }
+        if(order.getPayment() == null){
+            throw new IllegalArgumentException("The order must have a payment defined.");
+        }
     }
 }

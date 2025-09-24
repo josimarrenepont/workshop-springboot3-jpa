@@ -1,0 +1,111 @@
+[33m4280292[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Adjusted for interface (Service) and ImplService, cleaner code
+[33me0a5793[m Changed create method in OrderService
+[33m5aa4596[m Updated OrderService and StockService class
+[33m868184c[m Payment Class Correction
+[33md2a1877[m Updated project
+[33maa2aea1[m PaymentServiceTest updated class
+[33ma71031a[m Updated project
+[33mf420558[m Update README.md
+[33m2f7945c[m AuthController and AuthService class created
+[33m01edda7[m CorsConfig class created
+[33m0001a49[m WebConfig class created
+[33m5672ad6[m SecurityConfig class created
+[33mde706ce[m JwtTokenFilter class created
+[33mbf05ba4[m JwtTokenProvider class created
+[33m9e3e3d3[m AccountCredentialsVO class created
+[33m5ab6ce6[m TokenVO class created
+[33m9733659[m Permission class created
+[33m90c02ac[m Updated Classes
+[33m35c0de6[m testUpdate | CategoryControllerTest
+[33m5a651fb[m testCreateCategory | CategoryControllerTest
+[33meb590f8[m testFindById | CategoryControllerTest
+[33m4c81e12[m testFindAll | CategoryControllerTest
+[33me3fddb4[m testCategoryUpdate | CategoryServiceTest
+[33m7b5db09[m testCreateCategory | CategoryServiceTest
+[33m9b23417[m testFindById_ResourceNotFound | CategoryServiceTest
+[33mec0a12a[m testFindById | CategoryServiceTest
+[33mc81862f[m testFindAll | CategoryServiceTest
+[33m92e955f[m Update README.md
+[33m11c19fb[m testDelete | UserControllerTest
+[33m720bff7[m testUpdate | UserControllerTest
+[33mf57fff0[m testInsert | UserControllerTest
+[33m006d563[m testFindById | UserControllerTest
+[33m71ab506[m testFindAll | UserControllerTest
+[33m1fb3173[m testDeleteDatabaseException | UserServiceImplTest
+[33m88cf9f3[m testDeleteResourceNotFoundException | UserServiceImplTest
+[33m90ebd3d[m testDelete | UserServiceImplTest
+[33m2f9d830[m testUpate | UserServiceImplTest
+[33mcbce007[m testInsert | UserServiceImplTest
+[33m52222bd[m testFindById | UserServiceImplTest
+[33m0febd0a[m testFindAll | UserServiceImplTest
+[33me4bbe3d[m Created StockUpdateException and InsufficientStockException class | stockServiceUpdateStockTest
+[33me91e8e6[m stockServiceValidateTest_throwsException_whenInsufficientStock | StockServiceTest
+[33m37edfef[m stockServiceValidateTest | StockServiceTest
+[33m7702339[m testProcessPayment| OrderServiceTest
+[33m4febbff[m testProcessOrderInsufficientStock| OrderServiceTest
+[33m70504f1[m testProcessOrder| OrderServiceTest
+[33m3627691[m testDelete and testDeleteResourceNotFound and testDeleteDatabaseException| OrderServiceTest
+[33m51f680e[m testUpdate | OrderServiceTest
+[33mfd05af1[m testCreate | OrderServiceTest
+[33m1cd489d[m testFindById_ResourceNotFound | OrderServiceTest
+[33m1438171[m testFindById | OrderServiceTest
+[33m03a85a0[m testFindAll | OrderServiceTest
+[33m888c159[m testDelete | OrderControllerTest
+[33me09384a[m testUpdate | OrderControllerTest
+[33m03b1014[m testCreate | OrderControllerTest
+[33m04d5739[m testFindById | OrderControllerTest
+[33m7b86665[m testFindALL | OrderControllerTest
+[33mdab4627[m testDeleteResourceNotFoundException and testDeleteDatabaseException | ProductServiceTest
+[33me0a2609[m testDelete | ProductServiceTest
+[33m8494c5e[m testInsert | ProductServiceTest
+[33m250b188[m findById_ResourceNotFound | ProductServiceTest
+[33md076fc2[m testFindById | ProductServiceTest
+[33maded7f4[m Updated docker-compose.yml and ci-cd-pipeline
+[33m8b3213d[m testFindAll | ProductServiceTest
+[33mf41f347[m testDelete | ProductCOntrollerTest
+[33m3a66010[m testUpdate | ProductCOntrollerTest
+[33m5571690[m testInsert | ProductCOntrollerTest
+[33mae439b0[m testFindById | ProductCOntrollerTest
+[33m8d87c9f[m Updated method processOrder
+[33mc7ba1a7[m Update README.md
+[33m57e10bb[m Adjusts the creation of Payment and the relationship with Order, in addition to correcting the Payment test
+[33m4a58572[m Created ProductControllerTest class
+[33mabe8061[m Update README.md
+[33md784fd3[m updated docker-compose.yml
+[33mf180027[m created docker-compose.yml
+[33ma56132f[m Add CI/CD pipeline with GitHub Actions
+[33macc57b5[m Create LICENSE
+[33me3eaa58[m Create README.md
+[33m40f56b9[m methods updated with Dtos
+[33m45312d1[m Created UserDto class
+[33m5655a0f[m Created insert method in CategoryResource class
+[33mc831975[m methods updated with Dtos
+[33ma4e3c88[m Created ProductDto class
+[33mf744efb[m Created delete method in ProductResource class
+[33mc973909[m Created update method in ProductResource class
+[33m26e6ba4[m Created insert method in ProductResource class
+[33me861a3a[m Updated project | created new resources in the order class
+[33mfafb561[m ADD JPQL
+[33m911c54a[m att banco prod
+[33m0e80e09[m Dev profile
+[33m41bd43b[m Exception handling - delete
+[33m5b4e189[m Exception handling - findById
+[33m5490c5b[m User update
+[33mb6e0a3f[m User delete
+[33mb694662[m User insert
+[33m69259a0[m Subtotal & Total methods
+[33me35e223[m Payment, one-to-one association
+[33me730f80[m Product-OrderItem one-to-many association
+[33md6f2e04[m OrderItem, many-to-many association with extra attibutes part 2
+[33m9d02e2f[m OrderItem, many-to-many association with estra attributes PART 1
+[33m518e742[m Many-to-many association with JoinTable
+[33m1e47845[m Product
+[33md254afa[m Categoty
+[33m39598b9[m Order status enum
+[33mc862d13[m Order, Instant, ISO 8601 part 02
+[33m6e318d6[m Order, Instant, ISO 8601 part 01
+[33m91dd98a[m Service layer, component registration
+[33mfee7e01[m JPA repository, dependency injection, database seeding
+[33m50922ea[m H2 database, test profile, JPA
+[33mc89f741[m user entity and resource
+[33mcf4e64f[m Project Created

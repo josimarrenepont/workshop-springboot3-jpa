@@ -4,9 +4,9 @@ import com.educandoweb.course.entities.*;
 import com.educandoweb.course.entities.enums.OrderStatus;
 import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.repositories.ProductRepository;
-import com.educandoweb.course.services.OrderService;
-import com.educandoweb.course.services.PaymentService;
-import com.educandoweb.course.services.StockService;
+import com.educandoweb.course.services.impl.OrderServiceImpl;
+import com.educandoweb.course.services.impl.PaymentServiceImpl;
+import com.educandoweb.course.services.impl.StockServiceImpl;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import com.educandoweb.course.util.OrderUtils;
@@ -15,33 +15,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+public class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
     @Mock
-    private StockService stockService;
+    private StockServiceImpl stockServiceImpl;
     @Mock
-    private PaymentService paymentService;
+    private PaymentServiceImpl paymentServiceImpl;
     @Mock
     private ProductRepository productRepository;
 
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceImpl orderServiceImpl;
 
     private Order order;
     private Product product;
@@ -64,7 +62,7 @@ public class OrderServiceTest {
     void testFindAll(){
         when(orderRepository.findAll()).thenReturn(Collections.singletonList(order));
 
-        List<Order> result = orderService.findAll();
+        List<Order> result = orderServiceImpl.findAll();
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -75,7 +73,7 @@ public class OrderServiceTest {
     void testFindById(){
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-        Order result = orderService.findById(1L);
+        Order result = orderServiceImpl.findById(1L);
 
         assertNotNull(result);
         assertEquals(order.getId(), result.getId());
@@ -88,7 +86,7 @@ public class OrderServiceTest {
         when(orderRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-           orderService.findById(1L);
+           orderServiceImpl.findById(1L);
         });
 
         verify(orderRepository, times(1)).findById(1L);
@@ -97,7 +95,7 @@ public class OrderServiceTest {
     void testCreate(){
         when(orderRepository.save(any(Order.class))).thenReturn(order);
 
-        Order result = orderService.create(order);
+        Order result = orderServiceImpl.create(order);
 
         assertNotNull(result);
         assertEquals(order.getUser(), result.getUser());
@@ -115,7 +113,7 @@ public class OrderServiceTest {
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
 
-        Order result = orderService.update(1L, order);
+        Order result = orderServiceImpl.update(1L, order);
 
         assertNotNull(result);
         assertEquals(order.getId(), result.getId());
@@ -132,16 +130,16 @@ public class OrderServiceTest {
     void testProcessPaymentSuccessfully() {
         order.setOrderStatus(OrderStatus.PENDING);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
-        when(paymentService.processPayment(order)).thenReturn(order.getPayment());
+        when(paymentServiceImpl.processPayment(order)).thenReturn(order.getPayment());
         when(orderRepository.save(order)).thenReturn(order);
 
-        Order processedOrder = orderService.processpayment(order.getId());
+        Order processedOrder = orderServiceImpl.processpayment(order.getId());
 
         assertNotNull(processedOrder);
         assertEquals(OrderStatus.PAID, processedOrder.getOrderStatus());
 
-        verify(paymentService, times(1)).processPayment(order);
-        verify(stockService, times(1)).updateStock(order.getItems());
+        verify(paymentServiceImpl, times(1)).processPayment(order);
+        verify(stockServiceImpl, times(1)).updateStock(order.getItems());
         verify(orderRepository, times(1)).save(order);
     }
     @Test
@@ -150,7 +148,7 @@ public class OrderServiceTest {
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> orderService.processpayment(order.getId()));
+                () -> orderServiceImpl.processpayment(order.getId()));
 
         assertEquals("Payment has already been processed or order cancelled.", exception.getMessage());
     }
@@ -159,7 +157,7 @@ public class OrderServiceTest {
         when(orderRepository.findById(999L)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,
-                () -> orderService.processpayment(999L));
+                () -> orderServiceImpl.processpayment(999L));
 
         assertEquals("Resource not found. Id 999", exception.getMessage());
     }
@@ -168,13 +166,13 @@ public class OrderServiceTest {
     void testProcessPaymentFails() {
         order.setOrderStatus(OrderStatus.PENDING);
         when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
-        doThrow(new RuntimeException("Payment failed")).when(paymentService).processPayment(order);
+        doThrow(new RuntimeException("Payment failed")).when(paymentServiceImpl).processPayment(order);
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> orderService.processpayment(order.getId()));
+                () -> orderServiceImpl.processpayment(order.getId()));
 
         assertEquals("Payment failed", exception.getMessage());
-        verify(stockService, never()).updateStock(any());
+        verify(stockServiceImpl, never()).updateStock(any());
         verify(orderRepository, never()).save(any());
     }
 
@@ -182,7 +180,7 @@ public class OrderServiceTest {
     void testDelete(){
         doNothing().when(orderRepository).deleteById(1L);
 
-        orderService.delete(1L);
+        orderServiceImpl.delete(1L);
 
         verify(orderRepository, times(1)).deleteById(1L);
     }

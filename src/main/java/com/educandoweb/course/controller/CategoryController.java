@@ -3,6 +3,7 @@ package com.educandoweb.course.controller;
 import java.net.URI;
 import java.util.List;
 
+import com.educandoweb.course.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,20 +11,21 @@ import org.springframework.web.bind.annotation.*;
 
 import com.educandoweb.course.entities.Category;
 import com.educandoweb.course.repositories.CategoryRepository;
-import com.educandoweb.course.services.CategoryService;
+import com.educandoweb.course.services.impl.CategoryServiceImpl;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryController {
 
-	@Autowired
-	private CategoryService categoryService;
-	
-	@Autowired
-	private CategoryRepository categoryRepository;
 
-	@GetMapping
+	private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService, CategoryRepository categoryRepository) {
+        this.categoryService = categoryService;
+    }
+
+    @GetMapping
 	public ResponseEntity<List<Category>> findAll() {
 		List<Category> list = categoryService.findAll();
 		return ResponseEntity.ok().body(list);

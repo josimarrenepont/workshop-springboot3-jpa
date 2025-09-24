@@ -6,7 +6,7 @@ import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.OrderDto;
 import com.educandoweb.course.entities.enums.OrderStatus;
-import com.educandoweb.course.services.OrderService;
+import com.educandoweb.course.services.impl.OrderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -40,7 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 public class OrderControllerTest {
 
     @Mock
-    private OrderService orderService;
+    private OrderServiceImpl orderServiceImpl;
 
     @InjectMocks
     private OrderController orderController;
@@ -68,7 +68,7 @@ public class OrderControllerTest {
     @Test
     void testFindAll() throws Exception {
         List<OrderDto> orderDtoList = Collections.singletonList(new OrderDto(order));
-        when(orderService.findAll()).thenReturn(List.of(order));
+        when(orderServiceImpl.findAll()).thenReturn(List.of(order));
 
         ResultActions result = mockMvc.perform(get("/orders")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -80,7 +80,7 @@ public class OrderControllerTest {
     }
     @Test
     void testFindById() throws Exception{
-        when(orderService.findById(1L)).thenReturn(order);
+        when(orderServiceImpl.findById(1L)).thenReturn(order);
 
         ResultActions result = mockMvc.perform(get("/orders/1")
                 .contentType(MediaType.APPLICATION_JSON));
@@ -94,7 +94,7 @@ public class OrderControllerTest {
     @Test
     void testCreate() throws Exception{
 
-        when(orderService.create(any(Order.class))).thenReturn(order);
+        when(orderServiceImpl.create(any(Order.class))).thenReturn(order);
 
         String orderJson = """
                 {
@@ -118,7 +118,7 @@ public class OrderControllerTest {
     void testPayOrderEndpoint() throws Exception {
         order.setOrderStatus(OrderStatus.PENDING);
         order.setOrderStatus(OrderStatus.PAID);
-        when(orderService.processpayment(order.getId())).thenReturn(order);
+        when(orderServiceImpl.processpayment(order.getId())).thenReturn(order);
 
         ResultActions result = mockMvc.perform(put("/orders/{id}/pay", order.getId())
                 .contentType(MediaType.APPLICATION_JSON));
@@ -127,13 +127,13 @@ public class OrderControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.orderStatus").value("PAID"));
 
-        verify(orderService, times(1)).processpayment(order.getId());
+        verify(orderServiceImpl, times(1)).processpayment(order.getId());
     }
     @Test
     void testUpdate() throws Exception{
         Order order = new Order(1L, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.PAID, user);
         OrderDto orderDto = new OrderDto(order);
-        when(orderService.update(eq(1L), any(Order.class))).thenReturn(order);
+        when(orderServiceImpl.update(eq(1L), any(Order.class))).thenReturn(order);
 
         String orderJson = """
                 {
@@ -156,12 +156,12 @@ public class OrderControllerTest {
     @Test
     void testDelete() throws Exception{
         Long orderId = 1L;
-        doNothing().when(orderService).delete(orderId);
+        doNothing().when(orderServiceImpl).delete(orderId);
 
         ResultActions result = mockMvc.perform(delete("/orders/1", orderId)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isNoContent());
-        verify(orderService, times(1)).delete(orderId);
+        verify(orderServiceImpl, times(1)).delete(orderId);
     }
 }

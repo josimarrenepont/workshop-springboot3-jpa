@@ -5,23 +5,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.educandoweb.course.entities.dto.ProductDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.educandoweb.course.services.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import com.educandoweb.course.entities.Product;
-import com.educandoweb.course.services.ProductService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/products")
 public class ProductController {
 
-	@Autowired
-	private ProductService service;
+	private final ProductService service;
 
-	@GetMapping
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
+
+    @GetMapping
 	public ResponseEntity<List<ProductDto>> findAll() {
 		List<Product> list = service.findAll();
 		List<ProductDto> dtos = list.stream().map(ProductDto::new).collect(Collectors.toList());

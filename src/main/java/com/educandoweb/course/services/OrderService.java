@@ -19,16 +19,23 @@ import java.util.List;
 @Service
 public class OrderService {
 
-	@Autowired
-	private OrderRepository repository;
-	@Autowired
-	private StockService stockService;
-	@Autowired
-	private PaymentService paymentService;
-	@Autowired
-	private  ProductRepository productRepository;
 
-	public List<Order> findAll() {
+	private final OrderRepository repository;
+
+	private final StockService stockService;
+
+	private final PaymentService paymentService;
+
+	private  final ProductRepository productRepository;
+
+    public OrderService(OrderRepository repository, StockService stockService, PaymentService paymentService, ProductRepository productRepository) {
+        this.repository = repository;
+        this.stockService = stockService;
+        this.paymentService = paymentService;
+        this.productRepository = productRepository;
+    }
+
+    public List<Order> findAll() {
 		return repository.findAll();
 	}
 

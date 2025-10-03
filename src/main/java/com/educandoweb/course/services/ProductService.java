@@ -1,9 +1,14 @@
 package com.educandoweb.course.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.educandoweb.course.entities.Order;
+import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.dto.ProductDto;
+import com.educandoweb.course.repositories.OrderItemRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,8 +25,10 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository repository;
+	@Autowired
+	private OrderItemRepository orderItemRepository;
 
-    public List<Product> findAll(){
+	public List<Product> findAll(){
 		return repository.searchAll();
 	}
 	
@@ -67,5 +74,16 @@ public class ProductService {
 		} catch(DataIntegrityViolationException e){
 			throw new DatabaseException(e.getMessage());
 		}
+	}
+	public Set<Order> findOrdersByProductId(Long productId){
+		Product product = repository.findById(productId).orElseThrow(
+				() -> new ResourceNotFoundException(productId)
+		);
+
+		Set<Order> orders = new HashSet<>();
+		for(OrderItem item : product.getItems()){
+			orders.add(item.getOrder());
+		}
+		return orders;
 	}
 }

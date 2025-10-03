@@ -7,14 +7,14 @@ services:
       dockerfile: Dockerfile
     image: jnrenepont/springboot_course:latest
     ports:
-      - "8080:8081"
+      - "8080:8080"
     depends_on:
       - db
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/springboot_course
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 2801190225
+      SPRING_DATASOURCE_PASSWORD: "2801190225"
     networks:
       - springboot_course-network
 
@@ -25,7 +25,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 2801190225
+      POSTGRES_PASSWORD: "2801190225"
       POSTGRES_DB: springboot_course
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]

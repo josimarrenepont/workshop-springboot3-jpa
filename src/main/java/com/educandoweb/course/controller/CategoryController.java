@@ -17,8 +17,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(value = "/categories")
 public class CategoryController {
 
-	@Autowired
-	private CategoryService categoryService;
+
+	private final CategoryService categoryService;
+
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping
 	public ResponseEntity<List<Category>> findAll() {

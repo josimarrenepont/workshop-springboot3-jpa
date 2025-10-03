@@ -14,8 +14,12 @@ import java.util.Set;
 @Service
 public class StockService {
 
-    @Autowired
-    private ProductRepository productRepository;
+
+    private final ProductRepository productRepository;
+
+    public StockService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public void validateStock(Set<OrderItem> items) {
         for (OrderItem item : items) {

@@ -1,9 +1,12 @@
 package com.educandoweb.course.controller;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
 import org.springframework.http.ResponseEntity;
@@ -51,5 +54,10 @@ public class ProductController {
 	public ResponseEntity<Void> delete(@Validated @PathVariable Long id){
 		service.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+	@GetMapping(value = "/{productId}/orders")
+	public ResponseEntity<Set<Order>> findOrdersByProductId(@PathVariable Long productId){
+		Set<Order> orders = service.findOrdersByProductId(productId);
+		return ResponseEntity.ok().body(orders);
 	}
 }

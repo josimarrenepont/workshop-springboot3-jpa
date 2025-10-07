@@ -1,5 +1,7 @@
 package com.educandoweb.course.productsServiceTest;
 
+import com.educandoweb.course.entities.Order;
+import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.repositories.ProductRepository;
@@ -14,9 +16,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.hibernate.internal.util.collections.CollectionHelper.setOf;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,6 +36,7 @@ public class ProductServiceTest {
 
     private Product product;
     private ProductDto productDto;
+    private OrderItem orderItem;
 
     @BeforeEach
     public void setUp(){
@@ -128,5 +134,40 @@ public class ProductServiceTest {
         });
 
         verify(productRepository, times(1)).deleteById(1L);
+    }
+    @Test
+    void testFindOrdersByProductId(){
+        Order order1 = new Order();
+        order1.setId(1L);
+
+        Order order2 = new Order();
+        order2.setId(2L);
+
+        OrderItem orderItem1 = new OrderItem(order1, product, 7, 10.0);
+        OrderItem orderItem2 = new OrderItem(order2, product, 7, 10.0);
+
+        Set<OrderItem> items = setOf(orderItem1, orderItem2);
+        product.setItems(items);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+        Set<Order> result = productService.findOrdersByProductId(1L);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(order1));
+        assertTrue(result.contains(order2));
+
+        verify(productRepository, times(1)).findById(1L);
+    }
+    @Test
+    void testFindOrdersByProductId_ResourceNotFound(){
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            productService.findOrdersByProductId(1L);
+        });
+
+        verify(productRepository, times(1)).findById(1L);
     }
 }

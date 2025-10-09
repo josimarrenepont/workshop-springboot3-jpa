@@ -1,5 +1,7 @@
 package com.educandoweb.course.productsControllerTest;
 
+import com.educandoweb.course.entities.Order;
+import com.educandoweb.course.entities.OrderItem;
 import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.entities.dto.ProductDto;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.hibernate.internal.util.collections.CollectionHelper.setOf;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -25,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
@@ -120,5 +124,29 @@ public class ProductControllerTest {
 
         result.andExpect(status().isNoContent());
         verify(productService, times(1)).delete(productId);
+    }
+    @Test
+    public void testFindOrdersByProductId() throws Exception{
+        Order order1 = new Order();
+        order1.setId(1L);
+
+        Order order2 = new Order();
+        order2.setId(2L);
+
+        OrderItem orderItem1 = new OrderItem(order1, product, 7, 10.0);
+        OrderItem orderItem2 = new OrderItem(order2, product, 7, 10.0);
+
+        Set<OrderItem> items = setOf(orderItem1, orderItem2);
+        product.setItems(items);
+
+        when(productService.findOrdersByProductId(1L)).thenReturn(Set.of(order1, order2));
+
+        ResultActions result = mockMvc.perform(get("/products/1/orders")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("[0].id").value(1L))
+                .andExpect(jsonPath("[1].id").value(2L));
     }
 }

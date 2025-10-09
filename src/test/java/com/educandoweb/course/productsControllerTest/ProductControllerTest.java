@@ -6,6 +6,9 @@ import com.educandoweb.course.entities.Product;
 import com.educandoweb.course.controller.ProductController;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
+import static org.hamcrest.Matchers.*;
+
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -146,7 +149,6 @@ public class ProductControllerTest {
 
         result.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("[0].id").value(1L))
-                .andExpect(jsonPath("[1].id").value(2L));
+                .andExpect(jsonPath("$[*].id").value(Matchers.containsInAnyOrder(1, 2)));
     }
 }

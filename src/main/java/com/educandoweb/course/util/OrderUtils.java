@@ -14,9 +14,19 @@ public final class OrderUtils {
     }
 
     public static double calculateTotal(Order order) {
-        return order.getItems().stream()
+
+        if(order.getItems() == null || order.getItems().isEmpty()){
+            return 0.0;
+        }
+
+        double itemsTotal =  order.getItems().stream()
                 .mapToDouble(OrderItem::getSubTotal)
                 .sum();
+
+        double discount = order.getDiscount();
+        double shippingCost = order.getShippingCost();
+
+        return itemsTotal + shippingCost - discount;
     }
 
     public static void validateOrder(Order order) {

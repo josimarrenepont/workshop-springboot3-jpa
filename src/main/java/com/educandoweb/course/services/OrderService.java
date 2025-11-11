@@ -26,7 +26,7 @@ public class OrderService {
 
 	private final PaymentService paymentService;
 
-	private  final ProductRepository productRepository;
+	private final ProductRepository productRepository;
 
     public OrderService(OrderRepository repository, StockService stockService, PaymentService paymentService, ProductRepository productRepository) {
         this.repository = repository;

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.OrderItem;
@@ -75,15 +76,12 @@ public class ProductService {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
-	public Set<Order> findOrdersByProductId(Long productId){
+	public Set<Order> findOrdersByProductId(Long productId) {
 		Product product = repository.findById(productId).orElseThrow(
-				() -> new ResourceNotFoundException(productId)
-		);
+				() -> new ResourceNotFoundException(productId));
 
-		Set<Order> orders = new HashSet<>();
-		for(OrderItem item : product.getItems()){
-			orders.add(item.getOrder());
-		}
-		return orders;
+		return product.getItems().stream()
+				.map(OrderItem::getOrder)
+				.collect(Collectors.toSet());
 	}
 }

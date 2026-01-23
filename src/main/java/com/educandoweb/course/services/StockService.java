@@ -14,7 +14,6 @@ import java.util.Set;
 @Service
 public class StockService {
 
-
     private final ProductRepository productRepository;
 
     public StockService(ProductRepository productRepository) {

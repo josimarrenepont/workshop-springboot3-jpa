@@ -77,6 +77,7 @@ public class ProductService {
 		}
 	}
 	public Set<Order> findOrdersByProductId(Long productId) {
+
 		Product product = repository.findById(productId).orElseThrow(
 				() -> new ResourceNotFoundException(productId));
 

@@ -21,33 +21,31 @@ public class StockService {
     }
 
     public void validateStock(Set<OrderItem> items) {
-        for (OrderItem item : items) {
-            Product product = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException
-                            ("Product not found for id: " + item.getProduct().getId()));
-            if (product.getQuantityInStock() < item.getQuantity()) {
-                throw new InsufficientStockException(
-                        "Insufficient stock for product: " + product.getName());
-            }
-        }
+       items.forEach(item -> {
+           Product product = productRepository.findById(item.getProduct().getId())
+                   .orElseThrow(() -> new ResourceNotFoundException("Product not found!: "
+                           + item.getProduct().getId()));
+
+           if(product.getQuantityInStock() < item.getQuantity()){
+               throw new InsufficientStockException("Insufficient stock for product: " + product.getName());
+           }
+       });
     }
 
     public void updateStock(Set<OrderItem> items) {
-        for (OrderItem item : items) {
+        items.forEach(item -> {
             Product product = productRepository.findById(item.getProduct().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException
-                            ("Product not found for id " + item.getProduct().getId()));
-
-            if(product.getQuantityInStock() < item.getQuantity()){
-                throw new InsufficientStockException("Insufficient stock for product " + product.getName());
-            }
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found: "
+                            + item.getProduct().getId()));
 
             product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
-            try {
+
+            try{
                 productRepository.save(product);
             } catch (Exception e){
                 throw new StockUpdateException("Error updating stock for product " + product.getName(), e);
             }
-        }
+
+        });
     }
 }

@@ -3,6 +3,9 @@ package com.educandoweb.course.util;
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.OrderItem;
 
+import java.util.Collections;
+import java.util.Optional;
+
 public final class OrderUtils {
 
     private static final String NO_ITEMS = "The order must contain at least one time";
@@ -15,18 +18,13 @@ public final class OrderUtils {
 
     public static double calculateTotal(Order order) {
 
-        if(order.getItems() == null || order.getItems().isEmpty()){
-            return 0.0;
-        }
+        double itemsTotal = Optional.ofNullable(order.getItems())
+                .orElse(Collections.emptySet())
+                .stream()
+                    .mapToDouble(OrderItem::getSubTotal)
+                    .sum();
 
-        double itemsTotal =  order.getItems().stream()
-                .mapToDouble(OrderItem::getSubTotal)
-                .sum();
-
-        double discount = order.getDiscount();
-        double shippingCost = order.getShippingCost();
-
-        return itemsTotal + shippingCost - discount;
+        return itemsTotal + order.getShippingCost() - order.getDiscount();
     }
 
     public static void validateOrder(Order order) {

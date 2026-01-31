@@ -25,16 +25,16 @@ import com.educandoweb.course.repositories.ProductRepository;
 public class ProductService {
 
 	@Autowired
-	private ProductRepository repository;
+	private ProductRepository productRepository;
 	@Autowired
 	private OrderItemRepository orderItemRepository;
 
 	public List<Product> findAll(){
-		return repository.searchAll();
+		return productRepository.searchAll();
 	}
 	
 	public Product findById(Long id) {
-		Optional<Product> obj = repository.findById(id);
+		Optional<Product> obj = productRepository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
@@ -46,14 +46,14 @@ public class ProductService {
 		product.setImgUrl(obj.getImgUrl());
 		product.setQuantityInStock(obj.getQuantityInStock());
 
-		return repository.save(product);
+		return productRepository.save(product);
 	}
 
 	public Product update(Long id, ProductDto productDto) {
 		try{
-			Product entity = repository.getReferenceById(id);
+			Product entity = productRepository.getReferenceById(id);
 			updateData(entity, productDto);
-			return repository.save(entity);
+			return productRepository.save(entity);
 		} catch(EntityNotFoundException e){
 			throw new ResourceNotFoundException("Resource not found for ID: " + id);
 		}
@@ -69,7 +69,7 @@ public class ProductService {
 
 	public void delete(Long id) {
 		try{
-            repository.deleteById(id);
+			productRepository.deleteById(id);
         } catch(EmptyResultDataAccessException e){
 			throw new ResourceNotFoundException(id);
 		} catch(DataIntegrityViolationException e){
@@ -78,7 +78,7 @@ public class ProductService {
 	}
 	public Set<Order> findOrdersByProductId(Long productId) {
 
-		Product product = repository.findById(productId).orElseThrow(
+		Product product = productRepository.findById(productId).orElseThrow(
 				() -> new ResourceNotFoundException(productId));
 
 		return product.getItems().stream()

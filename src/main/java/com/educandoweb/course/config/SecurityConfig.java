@@ -66,7 +66,10 @@ public class SecurityConfig {
                                         "/auth/signing",
                                         "/auth/refresh/**",
                                         "/localhost:5173/refresh/**",
-                                        "/users/**"
+                                        "/users/**",
+                                        "/products/**",
+                                        "/categories/**",
+                                        "/orders/**"
                                 ).permitAll()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/users").denyAll()

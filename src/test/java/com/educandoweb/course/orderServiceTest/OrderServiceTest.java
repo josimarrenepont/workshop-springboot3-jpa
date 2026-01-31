@@ -9,7 +9,6 @@ import com.educandoweb.course.services.PaymentService;
 import com.educandoweb.course.services.StockService;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
-import com.educandoweb.course.util.OrderUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,7 +102,7 @@ public class OrderServiceTest {
         assertEquals(order.getMoment(), result.getMoment());
         assertEquals(order.getOrderStatus(), result.getOrderStatus());
 
-        double expectedTotal = OrderUtils.calculateTotal(order);
+        double expectedTotal = order.calculateTotal();
         assertEquals(expectedTotal, result.getTotal());
 
         verify(orderRepository, times(1)).save(any(Order.class));

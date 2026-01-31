@@ -1,19 +1,20 @@
 package com.educandoweb.course.entities;
 
 import com.educandoweb.course.entities.enums.OrderStatus;
-import com.educandoweb.course.util.OrderUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_order")
 public class Order implements Serializable {
+
+	private static final String NO_ITEMS = "The order must contain at least one time";
+	private static final String NO_USER = "The order must be associated with a costumer";
+	private static final String NO_PAYMENT = "The order must have a payment defined";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +23,7 @@ public class Order implements Serializable {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
 	private Instant moment;
 
+	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus;
 
 	@ManyToOne
@@ -34,7 +36,6 @@ public class Order implements Serializable {
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
 
-	private Double total;
 	private Double discount;
 	private Double shippingCost;
 
@@ -72,11 +73,7 @@ public class Order implements Serializable {
 	}
 
 	public Double getTotal() {
-		return OrderUtils.calculateTotal(this);
-	}
-
-	public void setTotal(Double total) {
-		this.total = total;
+		return calculateTotal();
 	}
 
 	public User getUser() {
@@ -117,6 +114,24 @@ public class Order implements Serializable {
 
 	public void setShippingCost(Double shippingCost) {
 		this.shippingCost = shippingCost;
+	}
+
+	public double calculateTotal() {
+		return items.stream()
+				.mapToDouble(OrderItem::getSubTotal)
+				.sum() + getShippingCost() - getDiscount();
+	}
+
+	public void validate() {
+		if (items == null || items.isEmpty()) {
+			throw new IllegalArgumentException(NO_ITEMS);
+		}
+		if (user == null) {
+			throw new IllegalArgumentException(NO_USER);
+		}
+		if(payment == null){
+			throw new IllegalArgumentException(NO_PAYMENT);
+		}
 	}
 
 	@Override

@@ -6,9 +6,7 @@ import com.educandoweb.course.repositories.OrderRepository;
 import com.educandoweb.course.repositories.ProductRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
-import com.educandoweb.course.util.OrderUtils;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -51,10 +49,7 @@ public class OrderService {
 		order.setOrderStatus(OrderStatus.PENDING);
 
 		stockService.validateStock(order.getItems());
-		OrderUtils.validateOrder(order);
-
-		Double total = OrderUtils.calculateTotal(order);
-		order.setTotal(total);
+		order.validate();
 
 		Order savedOrder = repository.save(order);
 

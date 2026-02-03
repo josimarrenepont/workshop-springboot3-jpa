@@ -81,13 +81,6 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public Authentication getAuthencation(String token){
-        DecodedJWT decodedJWT = decodedJWT(token);
-        UserDetails userDetails = this.userDetailsService
-                .loadUserByUsername(decodedJWT.getSubject());
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
     private DecodedJWT decodedJWT(String token) {
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);

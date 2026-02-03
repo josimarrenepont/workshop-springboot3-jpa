@@ -30,7 +30,7 @@ public class ProductService {
 	private OrderItemRepository orderItemRepository;
 
 	public List<Product> findAll(){
-		return productRepository.searchAll();
+		return productRepository.findAll();
 	}
 	
 	public Product findById(Long id) {

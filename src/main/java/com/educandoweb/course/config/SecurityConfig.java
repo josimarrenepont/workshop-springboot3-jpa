@@ -71,6 +71,7 @@ public class SecurityConfig {
                                         "/categories/**",
                                         "/orders/**"
                                 ).permitAll()
+                                .anyRequest().authenticated()
                                 .requestMatchers("/api/**").authenticated()
                                 .requestMatchers("/users").denyAll()
                 )

@@ -48,7 +48,7 @@ public class ProductServiceTest {
     @Test
     void testFindAll(){
 
-        when(productRepository.searchAll()).thenReturn(List.of(product));
+        when(productRepository.findAll()).thenReturn(List.of(product));
 
         List<Product> result = productService.findAll();
 
@@ -58,7 +58,7 @@ public class ProductServiceTest {
         assertEquals(product.getId(), result.get(0).getId());
         assertEquals(product.getName(), result.get(0).getName());
 
-        verify(productRepository, times(1)).searchAll();
+        verify(productRepository, times(1)).findAll();
     }
     @Test
     void testFindById(){

@@ -9,12 +9,15 @@ import java.util.stream.Collectors;
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.dto.ProductDto;
 import com.educandoweb.course.services.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.educandoweb.course.entities.Product;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Tag(name = "Products", description = "Endpoints deProdutos")
 @RestController
 @RequestMapping(value = "/products")
 public class ProductController {
@@ -38,6 +41,7 @@ public class ProductController {
 		ProductDto productDto = new ProductDto(obj);
 		return ResponseEntity.ok().body(productDto);
 	}
+	@Operation(summary = "Criar produto", description = "Cadastro de Produtos")
 	@PostMapping
 	public ResponseEntity<ProductDto> insert(@Validated  @RequestBody ProductDto dto){
 		Product product = service.insert(dto);

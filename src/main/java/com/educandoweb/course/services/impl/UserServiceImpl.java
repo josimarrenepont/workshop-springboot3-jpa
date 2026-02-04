@@ -1,7 +1,9 @@
 package com.educandoweb.course.services.impl;
 
+import com.educandoweb.course.entities.Permission;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
+import com.educandoweb.course.repositories.PermissionRepository;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.UserService;
 import com.educandoweb.course.services.exceptions.DatabaseException;
@@ -15,9 +17,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -25,9 +29,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PermissionRepository permissionRepository;
 
-    public UserServiceImpl(UserRepository userRepository){
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, PermissionRepository permissionRepository){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
@@ -44,15 +52,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
     }
     @Override
-    public User insert(UserDto userDto){
-        User user = new User(1L, "user", "user@email.com", "1234567", "password");
+    public User insert(UserDto userDto) {
+
+        User user = new User();
+
         user.setUserName(userDto.getName());
-        user.setPhone(userDto.getPhone());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
+        user.setPhone(userDto.getPhone());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+        user.setEnabled(true);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+
+        Permission userRole = permissionRepository
+                .findByDescription("ROLE_USER")
+                .orElseThrow(() ->
+                        new RuntimeException("Default role ROLE_USER not found"));
+
+        user.setPermissions(Set.of(userRole));
 
         return userRepository.save(user);
     }
+
     @Transactional
     @Override
     public void delete(Long id){
@@ -79,7 +102,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private void updateUserFields(User entity, UserDto obj) {
         entity.setPhone(obj.getPhone());
         entity.setEmail(obj.getEmail());
-        entity.setPassword(obj.getPassword());
+        entity.setPassword(passwordEncoder.encode(obj.getPassword()));
     }
 
     @Override

@@ -1,47 +1,54 @@
 package com.educandoweb.course.security.jwt;
 
-import com.educandoweb.course.services.exceptions.InvalidJwtAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
-
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
-public class JwtTokenFilter extends GenericFilterBean {
+@Component
+public class JwtTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
-    public JwtTokenFilter (JwtTokenProvider tokenProvider){
+    public JwtTokenFilter(JwtTokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/auth")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs");
+    }
 
-        String token = tokenProvider.resolveToken((HttpServletRequest) request);
-        Authentication auth = null;
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException { // Trate as exceções aqui
 
+        String token = tokenProvider.resolveToken(request);
 
         try {
-            if(token != null && tokenProvider.validateToken(token)){
-                auth = tokenProvider.getAuthentication(token);
-
-                if(auth != null){
+            if (token != null && tokenProvider.validateToken(token)) {
+                Authentication auth = tokenProvider.getAuthentication(token);
+                if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
-        } catch (InvalidJwtAuthenticationException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            // Se o token for inválido, apenas limpa o contexto e deixa seguir
+            SecurityContextHolder.clearContext();
         }
-        chain.doFilter(request, response);
+
+        // Esta linha PRECISA ser executada para a requisição chegar no Controller
+        filterChain.doFilter(request, response);
     }
 }

@@ -3,13 +3,15 @@ package com.educandoweb.course.controller;
 import com.educandoweb.course.entities.Order;
 import com.educandoweb.course.entities.dto.OrderDto;
 import com.educandoweb.course.services.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-
+@Tag(name = "Orders", description = "Endpoints de Pedidos")
 @RestController
 @RequestMapping(value = "/orders")
 public class OrderController {
@@ -34,6 +36,7 @@ public class OrderController {
         return ResponseEntity.ok(new OrderDto(order));
     }
 
+    @Operation(summary = "Criar pedido", description = "Criar novo pedido")
     @PostMapping
     public ResponseEntity<OrderDto> create(@RequestBody Order order) {
         Order createdOrder = orderService.create(order);

@@ -27,7 +27,7 @@ public class AccountCredentialsVO implements Serializable {
         return password;
     }
 
-    public void setPasswor(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.naming.AuthenticationException;
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-public class InvalidJwtAuthenticationException extends AuthenticationException {
+public class InvalidJwtAuthenticationException extends RuntimeException {
 
     public InvalidJwtAuthenticationException(String message){
         super(message);

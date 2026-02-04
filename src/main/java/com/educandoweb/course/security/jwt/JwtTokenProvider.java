@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.JWTVerifier;
 import com.educandoweb.course.security.TokenVO;
-import com.educandoweb.course.services.exceptions.InvalidJwtAuthenticationException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,7 +20,6 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
-@Service
 @Component
 public class JwtTokenProvider {
 
@@ -92,14 +89,15 @@ public class JwtTokenProvider {
         }
         return null;
     }
-    public boolean validateToken(String token) throws InvalidJwtAuthenticationException {
-        try{
+    public boolean validateToken(String token) {
+        try {
             DecodedJWT decodedJWT = decodedJWT(token);
             return !decodedJWT.getExpiresAt().before(new Date());
-        } catch(Exception e){
-            throw new InvalidJwtAuthenticationException("Expired or invalid JWT token");
+        } catch (Exception e) {
+            return false;
         }
     }
+
     public TokenVO refreshToken(String refreshToken){
         if(refreshToken.contains("Bearer ")){
             refreshToken = refreshToken.substring("Bearer ".length());

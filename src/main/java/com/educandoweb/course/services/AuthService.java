@@ -24,37 +24,42 @@ public class AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity signing(AccountCredentialsVO data){
+    public ResponseEntity<TokenVO> signin(AccountCredentialsVO data) {
+
         var username = data.getUsername();
         var password = data.getPassword();
 
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch(Exception e){
-            throw new BadCredentialsException("Invalid usernama/password suppliers");
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+        } catch (Exception e) {
+            throw new BadCredentialsException("Invalid username/password");
         }
-        var user = userRepository.findByUsername(username);
 
-        var tokenResponse = new TokenVO();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Username " + username + " not found!")
+                );
 
-        if(user != null){
-            tokenResponse = tokenProvider.createAccessToken(username, user.get().getRoles());
-        } else{
-            throw new UsernameNotFoundException("username " + username + " not found!");
-        }
-        return ResponseEntity.ok(tokenResponse);
+        var token = tokenProvider.createAccessToken(
+                username,
+                user.getRoles()
+        );
+
+        return ResponseEntity.ok(token);
     }
 
     @SuppressWarnings("rawtypes")
-    public ResponseEntity refreshToken(String username, String refreshToken){
-        var user = userRepository.findByUsername(username);
+    public ResponseEntity<TokenVO> refreshToken(String username, String refreshToken) {
 
-        var tokenResponse = new TokenVO();
-        if(user != null){
-            tokenResponse = tokenProvider.refreshToken(refreshToken);
-        } else{
-            throw new UsernameNotFoundException("username " + username + " not found!");
-        }
-        return ResponseEntity.ok(tokenResponse);
+        userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("Username " + username + " not found!")
+                );
+
+        var token = tokenProvider.refreshToken(refreshToken);
+
+        return ResponseEntity.ok(token);
     }
 }

@@ -1,7 +1,9 @@
 package com.educandoweb.course.userServiceImplTest;
 
+import com.educandoweb.course.entities.Permission;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.entities.dto.UserDto;
+import com.educandoweb.course.repositories.PermissionRepository;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +28,12 @@ public class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private PermissionRepository permissionRepository;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -65,30 +74,38 @@ public class UserServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> userService.findById(1L));
     }
     @Test
-    void testInsert(){
+    void testInsert() {
+        userDto.setPassword("123456");
+        when(permissionRepository.findByDescription(anyString())).
+                thenReturn(Optional.of(new Permission(1L, "ROLE_USER")));
+
+        when(passwordEncoder.encode(anyString())).thenReturn("senhaCriptografada");
+
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        UserDto userDto = new UserDto(user);
         User result = userService.insert(userDto);
 
         assertNotNull(result);
-        assertEquals(userDto.getName(), result.getUserName());
+        assertEquals(userDto.getName(), result.getUsername());
+
+        verify(passwordEncoder).encode(anyString());
+        verify(permissionRepository).findByDescription("ROLE_USER");
+        verify(userRepository).save(any(User.class));
     }
+
     @Test
-    void testUpdate(){
+    void testUpdate() {
         when(userRepository.getReferenceById(1L)).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        userDto.setEmail("marcos@gmail.com");
-        UserDto result = userService.update( 1L, userDto);
+        userDto.setPassword("novaSenha");
+
+        UserDto result = userService.update(1L, userDto);
 
         assertNotNull(result);
-        assertEquals(userDto.getPhone(), result.getPhone());
-        assertEquals(userDto.getPassword(), result.getPassword());
-        assertEquals(userDto.getEmail(), result.getEmail());
-        verify(userRepository, times(1)).getReferenceById(1L);
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(passwordEncoder).encode(anyString());
     }
+
     @Test
     void testDelete(){
         doNothing().when(userRepository).deleteById(1L);

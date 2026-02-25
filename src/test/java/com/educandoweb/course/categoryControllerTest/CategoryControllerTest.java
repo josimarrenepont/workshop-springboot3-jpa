@@ -3,6 +3,7 @@ package com.educandoweb.course.categoryControllerTest;
 import com.educandoweb.course.controller.CategoryController;
 import com.educandoweb.course.entities.Category;
 import com.educandoweb.course.repositories.CategoryRepository;
+import com.educandoweb.course.security.jwt.JwtTokenProvider;
 import com.educandoweb.course.services.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,8 @@ public class CategoryControllerTest {
     @MockBean
     private CategoryRepository categoryRepository;
 
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
 
     private ObjectMapper objectMapper = new ObjectMapper();
     private Category category;

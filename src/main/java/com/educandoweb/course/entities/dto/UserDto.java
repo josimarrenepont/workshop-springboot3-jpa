@@ -2,8 +2,6 @@ package com.educandoweb.course.entities.dto;
 
 import com.educandoweb.course.entities.User;
 
-import java.util.Set;
-
 public class UserDto {
 
     private Long id;
@@ -13,6 +11,7 @@ public class UserDto {
     private String password;
 
     public UserDto(){}
+    public UserDto(Object object, String name, String mail, String number, String password){}
 
     public UserDto(User user) {
         this.id = user.getId();

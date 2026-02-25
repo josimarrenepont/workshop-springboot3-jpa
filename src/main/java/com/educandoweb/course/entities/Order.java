@@ -24,6 +24,7 @@ public class Order implements Serializable {
 	private Instant moment;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "order_status")
 	private OrderStatus orderStatus;
 
 	@ManyToOne

@@ -32,7 +32,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws ServletException, IOException { // Trate as exceções aqui
+    ) throws ServletException, IOException {
 
         String token = tokenProvider.resolveToken(request);
 
@@ -44,11 +44,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Se o token for inválido, apenas limpa o contexto e deixa seguir
+
             SecurityContextHolder.clearContext();
         }
 
-        // Esta linha PRECISA ser executada para a requisição chegar no Controller
         filterChain.doFilter(request, response);
     }
 }
